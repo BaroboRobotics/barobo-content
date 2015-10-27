@@ -47,6 +47,7 @@ var asyncBaroboBridge = (function(main) {
         obj.listFirmwareFiles = function() {
             return ["v4.4.6.eeprom", "v4.4.6.hex"];
         };
+        obj.configuration = {};
         /*
         obj.getLEDColor = function(id) {
             if (!colorMap[id]) {
@@ -20991,14 +20992,20 @@ function responseHandler(e) {
                 md5sum: json['firmware-md5sums'][firmwareArray[0]]['eeprom']
             });
         }
-        asyncBaroboBridge.configuration.nextCheck = CHECK_INTERVAL;
+        scheduleFirmwareUpdateCheck(CHECK_INTERVAL);
     }
 }
 
 function errorResponseHandler(e) {
     // re-try request after 10 seconds.
     console.warn('Error occurred attempting to download the firmware.');
-    setTimeout(checkForFirmwareUpdate, 10000);
+    scheduleFirmwareUpdateCheck(10000);
+}
+
+function scheduleFirmwareUpdateCheck(delay) {
+    console.log('Scheduling firmware check in ' + delay + 'ms');
+    asyncBaroboBridge.configuration.nextCheck = Date.now() + delay;
+    setTimeout(checkForFirmwareUpdate, delay);
 }
 
 function checkForFirmwareUpdate() {
@@ -21225,12 +21232,21 @@ asyncBaroboBridge.connectionTerminated.connect(function(id, timestamp) {
     }
 });
 
+// Clamp x to the range a <= x <= b
+function clamp (x, a, b) {
+    return Math.min(Math.max(x, a), b);
+}
+
 var nextCheck = asyncBaroboBridge.configuration.nextCheck;
 if (typeof nextCheck === 'undefined') {
-    setTimeout(checkForFirmwareUpdate, 0);
-} else {
-    setTimeout(checkForFirmwareUpdate, nextCheck);
+    nextCheck = Date.now();
 }
+
+// Clamp the delay so drastic changes in the user's system clock
+// don't screw things up
+var delay = clamp(nextCheck - Date.now(), 0, CHECK_INTERVAL);
+scheduleFirmwareUpdateCheck(delay);
+
 },{"./event.jsx":148,"./firmware.jsx":149,"./linkbot.jsx":150,"./manager-ui.jsx":152,"./storage.jsx":154,"./version.jsx":155}],154:[function(require,module,exports){
 var settings = {
     DBNAME: "robotsdb",
