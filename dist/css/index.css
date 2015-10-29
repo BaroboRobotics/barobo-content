@@ -208,3 +208,9 @@
 #add-pathway-button {
 
 }
+.ticker {
+	padding: 15px 20px;
+	background-color: #26aee8;
+	color: white;
+	font-weight: bold;
+}
