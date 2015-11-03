@@ -143,11 +143,6 @@ body > header {
   margin-bottom: 0.5em;
 }
 
-body {
-    position: relative;
-    margin: 1em 1em;
-}
-
 
 .response {
     display: none;
