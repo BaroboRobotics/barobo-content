@@ -13,33 +13,28 @@ function GetURLParameter(sParam)
     }
 }
 
-var redRobot = GetURLParameter('redRobot');
-var blueRobot = GetURLParameter('blueRobot');
+var redRobotParam = GetURLParameter('redRobot');
+var blueRobotParam = GetURLParameter('blueRobot');
 
 $(function () {
-
-document.body.appendChild(Linkbots.managerElement());
 
 // If we got robot IDs through GET parameters, pass them on to other Next/Back
 // buttons.
 
-if (typeof redRobot !== 'undefined' && typeof blueRobot !== 'undefined') {
+if (typeof redRobotParam !== 'undefined' && typeof blueRobotParam !== 'undefined') {
     $('.page-navigation').each(function () {
         $(this).click(function () {
             var href = $(this).attr('href');
-            href = href + "?redRobot=" + redRobot
-                 + "&blueRobot=" + blueRobot;
+            href = href + "?redRobot=" + redRobotParam
+                 + "&blueRobot=" + blueRobotParam;
             $(this).attr('href', href);
         });
     });
-    Linkbots.managerAdd(blueRobot, redRobot);
-    Linkbots.managerConnect();
-    Linkbots.managerRedraw();
 
     // Also pass it to any hidden form inputs. This is a bit hacky, being
     // only used on prediction.html and setup.html.
-    $('input[name=redRobot]').attr('value', redRobot);
-    $('input[name=blueRobot]').attr('value', blueRobot);
+    $('input[name=redRobot]').attr('value', redRobotParam);
+    $('input[name=blueRobot]').attr('value', blueRobotParam);
 }
 
 
