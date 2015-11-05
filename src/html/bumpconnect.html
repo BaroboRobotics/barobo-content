@@ -20,83 +20,92 @@
   <div class="row step">
     <div class="col-md-12 col-lg-12 col-sm-12">
       <h2>Introduction</h2>
-      <p class="lead">Plugin the Linkbot or Z-Link dongle.</p>
-      <img src="img/getting-started/linkbot.png" alt="Linkbot" width="223" height="157" />
-      <img src="img/getting-started/z-dongle.png" alt="Z-Dongle" width="171" height="123" />
+      <p class="lead">
+        "BumpConnect" is a process in which you can "bump" robots together in
+        order to form small peer-to-peer networks of robots. 
+        Once the robots are paired together, you can use a "master" robot to
+        control all of the other paired robots. 
+        This document will show you how to Bump-Connect your Linkbots.
+        </p>
+        <p class="lead">
+        Please note that Bump-Connect is not intended to be used simultaneously
+        with Linkbot Labs. If you connect to a Bump-Connected Linkbot with
+        Linkbot Labs, or Bump-Connect a robot that is already connected to
+        Linkbot Labs, undefined behavior may result.
+        </p>
+      </p>
     </div>
   </div>
   <div class="row step">
     <div class="col-md-12 col-lg-12 col-sm-12">
       <h2>Step 1</h2>
-      <p class="lead">Plugin the Linkbot or Z-Link dongle.</p>
-      <img src="img/getting-started/linkbot.png" alt="Linkbot" width="223" height="157" />
-      <img src="img/getting-started/z-dongle.png" alt="Z-Dongle" width="171" height="123" />
+      <p class="lead">Hold down the "B" button on the robot you want to be the
+      "master" or controller robot.</p>
     </div>
   </div>
   <div class="row step">
     <div class="col-md-12 col-lg-12 col-sm-12">
       <h2>Step 2</h2>
-      <p class="lead">Turn on the Linkbot by pressing and holding the power button for 3 seconds.</p>
-      <img src="img/getting-started/hold-power-button.png" alt="Hold Power Button" width="222" height="182" />
+      <p class="lead">Hold down the "B" button on a robot you want to be
+      controlled..</p>
     </div>
   </div>
   <div class="row step">
     <div class="col-md-12 col-lg-12 col-sm-12">
       <h2>Step 3</h2>
-      <p class="lead">Open the Robot Manager along the left edge of the screen.</p>
-      <img src="img/getting-started/robomgr-open.png" alt="Open Robot Manager" width="31" height="161" />
+      <p class="lead">
+        Bump the robots together.
+        When the robots feel the bump, they should emit a green flash with their
+        multicolor LEDs. 
+        If one or both of the robots do not emit a flash, repeat steps 1-3.
+      </p>
     </div>
   </div>
   <div class="row step">
     <div class="col-md-12 col-lg-12 col-sm-12">
       <h2>Step 4</h2>
-      <p class="lead">Enter the Linkbot ID into the Robot Manager and push "Add."</p>
-      <img src="img/linkbot-front-view.png" alt="Front View" width="214" height="200" />
-      <p class="lead">This will add a Linkbot robot to the Robot Manager, shown below.</p>
-      <img src="img/getting-started/linkbot-tab.png" alt="Linkbot Robot" width="211" height="100" />
+      <p class="lead">
+        The robots should change their LED color to a randomly selected color
+          within about 5 seconds.
+        If this does not happen after 5 seconds, repeat steps 1-3. 
+        Once the robots change their LED color, one of the robots will
+        periodically flash a blue LED. 
+        The flashing robot is the master robot.
+      </p>
+      <img src="img/BumpConnect.gif" alt="Bump-Connect" align="center"/>
     </div>
   </div>
   <div class="row step">
     <div class="col-md-12 col-lg-12 col-sm-12">
-      <h2>Step 5</h2>
-      <p class="lead">Open the Robot Control Panel by pressing the white expand arrow next to the Linkbot robot that was added.</p>
-      <img src="img/getting-started/control-panel.png" alt="Control Panel" width="624" height="528" style="margin-bottom: 10px;" />
+      <h2>Robot Control</h2>
       <p class="lead">
-        From here you can read your Linkbot’s encoder data and drive its motors to specific positions (2), adjust its motor speeds (3),
-        move its motors individually (4), and, if you’re using a Linkbot-I, move its motors coordinately in a car-like fashion (5).
-        We’ll cover some of this in detail later.
+        Once the robots are Bump-Connected, they enter a default initial mode
+      called "Pose-Teaching". In this mode, the buttons perform the following
+      functions:
       </p>
+      <ul>
+          <li> Power Button: Delete all recorded poses.
+          <li> A Button: Record the current robot positions as a new pose.
+          <li> B Button: If there are any recorded poses, play and repeat all of the
+          recorded poses. If there are no recorded poses and the "B" button is
+          pressed on the master robot, enter "Tilt-Drive" mode.
+      </ul>
       <p class="lead">
-        Test out the motors by clicking on the arrow buttons (4 and 5). Try adjusting their speed while they’re moving (3).
-        To stop them, press the stop button at the bottom.
+      As stated above, if the "B" button is pressed on the master robot while
+      there are no recorded poses, the robots enter Tilt-Drive mode. In
+      Tilt-Drive mode, the Master robot can be used to drive the controlled
+      robots as remote control cars. Simply tilt the master robot forward,
+      backward, or side to side to make the controlled robots drive forward,
+      backward, or turn.
       </p>
+
       <p class="lead">
-        To the right of the motor control column are a buzzer control bar and an accelerometer data display. Try beeping
-        the buzzer at various frequencies. Shake your Linkbot and you should see the accelerometer sliders dance.
+      From the Tilt-Drive mode, press the B button again to enter Copy-Cat mode.
+      In Copy-Cat mode, all of the controlled robots move their motors to match
+      the masters motor positions. You can move the master's motors around and
+      all of the controlled robots will immediately move their motors to match.
+      Press the "B" button to return to Pose-Teaching mode.
       </p>
-      <p class="lead">
-        Notice that the robot control bar changes when its control panel is expanded: you can modify your Linkbot’s LED
-        color with the color button and remove it from your robot manager with the trash button.
-      </p>
-      <p class="lead">
-        Important: The robot control panel generates a lot of radio traffic, especially if the Linkbot is being
-        manipulated by hand. Linkbot users sharing the same room should minimize the amount of time they have their
-        control panels expanded, especially if they notice connectivity problems.
-      </p>
-    </div>
-  </div>
-  <div class="row step">
-    <div class="col-md-12 col-lg-12 col-sm-12">
-      <h2>Step 6</h2>
-      <p class="lead">If the control panel is too big or too small for your screen then you can zoom in or out using the buttons in the top right, as shown below.</p>
-      <img src="img/getting-started/zoom-buttons.png" alt="Zoom Buttons" width="114" height="62" />
-    </div>
-  </div>
-  <div class="row step">
-    <div class="col-md-12 col-lg-12 col-sm-12">
-      <h3>Step 7</h3>
-      <p class="lead">To go back to the Main Page click the Linkbot Labs icon at the top left of the screen.  Later Gator!</p>
-      <img src="img/getting-started/logo.png" alt="Logo" width="233" height="66" />
     </div>
   </div>
 </div>
