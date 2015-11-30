@@ -114,6 +114,12 @@
 	background-size: 170px 275px;
 	color: #fff;
 }
+#pose-coding-icon {
+	border: 1px solid #49d6ff;
+	background: #49d6ff url('../img/ChPoseCodingIcon.png') no-repeat top left;
+	background-size: 170px 275px;
+	color: #fff;
+}
 #ch-coding-icon {
 	border: 1px solid #44c8ee;
 	background: #44c8ee url('../img/ChProgrammingIcon.png') no-repeat top left;
@@ -213,4 +219,8 @@
 	background-color: #26aee8;
 	color: white;
 	font-weight: bold;
+}
+
+.ljs-body-open > .ticker {
+	margin-left: -30px;
 }
