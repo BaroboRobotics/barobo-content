@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+<head>
+  <title>Linkbot Labs</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="/linkbotjs/linkbot.css">
+  <style type="text/css">
+    .step {
+      padding-bottom: 20px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="row step">
+    <div class="col-md-12 col-lg-12 col-sm-12">
+      <h2>Introduction</h2>
+      <p class="lead">
+        "BumpConnect" is a process in which you can "bump" robots together in
+        order to form small peer-to-peer networks of robots. 
+        Once the robots are paired together, you can use a "master" robot to
+        control all of the other paired robots. 
+        This document will show you how to Bump-Connect your Linkbots.
+        </p>
+        <p class="lead">
+        Please note that Bump-Connect is not intended to be used simultaneously
+        with Linkbot Labs. If you connect to a Bump-Connected Linkbot with
+        Linkbot Labs, or Bump-Connect a robot that is already connected to
+        Linkbot Labs, undefined behavior may result.
+        </p>
+      </p>
+    </div>
+  </div>
+  <div class="row step">
+    <div class="col-md-12 col-lg-12 col-sm-12">
+      <h2>Step 1</h2>
+      <p class="lead">Hold down the "B" button on the robot you want to be the
+      "master" or controller robot.</p>
+    </div>
+  </div>
+  <div class="row step">
+    <div class="col-md-12 col-lg-12 col-sm-12">
+      <h2>Step 2</h2>
+      <p class="lead">Hold down the "B" button on a robot you want to be
+      controlled..</p>
+    </div>
+  </div>
+  <div class="row step">
+    <div class="col-md-12 col-lg-12 col-sm-12">
+      <h2>Step 3</h2>
+      <p class="lead">
+        Bump the robots together.
+        When the robots feel the bump, they should emit a green flash with their
+        multicolor LEDs. 
+        If one or both of the robots do not emit a flash, repeat steps 1-3.
+      </p>
+    </div>
+  </div>
+  <div class="row step">
+    <div class="col-md-12 col-lg-12 col-sm-12">
+      <h2>Step 4</h2>
+      <p class="lead">
+        The robots should change their LED color to a randomly selected color
+          within about 5 seconds.
+        If this does not happen after 5 seconds, repeat steps 1-3. 
+        Once the robots change their LED color, one of the robots will
+        periodically flash a blue LED. 
+        The flashing robot is the master robot.
+      </p>
+      <img src="img/BumpConnect.gif" alt="Bump-Connect" align="center"/>
+    </div>
+  </div>
+  <div class="row step">
+    <div class="col-md-12 col-lg-12 col-sm-12">
+      <h2>Robot Control</h2>
+      <p class="lead">
+        Once the robots are Bump-Connected, they enter a default initial mode
+      called "Pose-Teaching". In this mode, the buttons perform the following
+      functions:
+      </p>
+      <ul>
+          <li> Power Button: Delete all recorded poses.
+          <li> A Button: Record the current robot positions as a new pose.
+          <li> B Button: If there are any recorded poses, play and repeat all of the
+          recorded poses. If there are no recorded poses and the "B" button is
+          pressed on the master robot, enter "Tilt-Drive" mode.
+      </ul>
+      <p class="lead">
+      As stated above, if the "B" button is pressed on the master robot while
+      there are no recorded poses, the robots enter Tilt-Drive mode. In
+      Tilt-Drive mode, the Master robot can be used to drive the controlled
+      robots as remote control cars. Simply tilt the master robot forward,
+      backward, or side to side to make the controlled robots drive forward,
+      backward, or turn.
+      </p>
+
+      <p class="lead">
+      From the Tilt-Drive mode, press the B button again to enter Copy-Cat mode.
+      In Copy-Cat mode, all of the controlled robots move their motors to match
+      the masters motor positions. You can move the master's motors around and
+      all of the controlled robots will immediately move their motors to match.
+      Press the "B" button to return to Pose-Teaching mode.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script src="/linkbotjs/linkbot.min.js"></script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-22263798-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>
+
