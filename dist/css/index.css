@@ -96,6 +96,12 @@
 	background-size: 170px 275px;
 	color: #fff;
 }
+#bumpconnect-icon {
+	border: 1px solid #3b873b;
+	background: #56ab56 url('../img/BumpConnect.png') no-repeat top left;
+	background-size: 170px 275px;
+	color: #fff;
+}
 #intro-python-icon {
 	border: 1px solid #d54c10;
 	background: #d54c10 url('../img/IntroPythonIcon.png') no-repeat top left;
@@ -223,4 +229,4 @@
 
 .ljs-body-open > .ticker {
 	margin-left: -30px;
-}
+}}
