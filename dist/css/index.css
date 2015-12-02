@@ -227,6 +227,10 @@
 	font-weight: bold;
 }
 
+.ticker a {
+	color: white;
+}
+
 .ljs-body-open > .ticker {
 	margin-left: -30px;
 }

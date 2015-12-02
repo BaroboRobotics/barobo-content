@@ -23,8 +23,8 @@ Object.defineProperty(Object.prototype, "update", {
 var
   /* Constants */
   wheelRadius = 2.75,
-  blue = blueRobotParam,
-  red = redRobotParam,
+  blue = blueRobot,
+  red = redRobot,
   imgH = 30, imgW = 40,
   ymin = -2, ymax = 12,
 
@@ -337,31 +337,29 @@ var
  *
  * eff yeah, cps
  */
-  setTimeout(function() {
-    var acq = Linkbots.acquire(2);
-    cop.robot = acq.robots[0];
-    robber.robot = acq.robots[1];
 
-    cop.img = $("<img />").attr('src', cop.imgSrc).load(function () {
-      robber.img = $("<img />").attr('src', robber.imgSrc).load(function () {
-        initializeCharts();
-        if (qs.hasOwnProperty('red')) {
-          red = qs.red;
-        }
-        if (qs.hasOwnProperty('blue')) {
-          blue = qs.blue;
-        }
-        if (parseInt(qs.intersect)) {
-          runDemo();
-        }
-      })[0];
+var acq = Linkbots.acquire(2);
+cop.robot = acq.robots[0];
+robber.robot = acq.robots[1];
+
+cop.img = $("<img />").attr('src', cop.imgSrc).load( function () {
+    robber.img = $("<img />").attr('src', robber.imgSrc).load( function () {
+      initializeCharts();
+      if (qs.hasOwnProperty('red')) {
+        red = qs.red;
+      }
+      if (qs.hasOwnProperty('blue')) {
+        blue = qs.blue;
+      }
+      if (parseInt(qs.intersect)) {
+        runDemo();
+      }
     })[0];
+  })[0];
 
-    $("#guess").val(qs.intersect);
-    $("#demoBtn").click(runDemo);
-    $("#stopBtn").click(emergencyStop);
-    $(window).resize(function () {
-      plotCharts(xvstSeries, posSeries);
-    });
-  }, 1000);
+$("#guess").val(qs.intersect);
+$("#demoBtn").click(runDemo);
+$("#stopBtn").click(emergencyStop);
+$(window).resize(function () { plotCharts(xvstSeries, posSeries); });
+
 });

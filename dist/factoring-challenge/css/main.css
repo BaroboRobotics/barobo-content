@@ -17,11 +17,9 @@ select,
 textarea {
     color: #222;
 }
-body {
-    font-size: 14px;
-}
-.challenge {
-    font-size: 28px;
+
+html {
+    font-size: 1em;
     line-height: 1.4;
 }
 
@@ -138,12 +136,12 @@ img.textbook {
 body > header {
   margin-bottom: 0.5em;
 }
-/*
+
 body {
     position: relative;
     margin: 1em 1em;
 }
-*/
+
 
 .response {
     display: none;
@@ -151,6 +149,17 @@ body {
 
 .show_ {
     display: inline !important;
+}
+
+nav {
+    position: absolute;
+    width: 10em;
+}
+
+nav + section {
+    position: absolute;
+    /* nav.width + 1 */
+    left: 11em;
 }
 
 h4:first-child {
