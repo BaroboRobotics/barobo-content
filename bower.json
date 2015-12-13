@@ -12,13 +12,13 @@
     "!html/**/*"
   ],
   "devDependencies": {
-    "CopsVsRobbers": "git@github.com:Barobo/CopsVsRobbers.git#master",
-    "FactoringChallenge": "git@github.com:BaroboRobotics/FactoringChallenge.git#master",
-    "LinkbotPythonCurriculum": "git@github.com:BaroboRobotics/LinkbotPythonCurriculum.git#master",
-    "LinkbotUpdateApp": "git@github.com:BaroboRobotics/LinkbotUpdateApp.git#master",
-    "Pianobot": "git@github.com:BaroboRobotics/Pianobot.git#master",
-    "PoseTeachingApp": "git@github.com:BaroboRobotics/PoseTeachingApp.git#master",
-    "linkbotjs": "git@github.com:BaroboRobotics/linkbotjs.git#master",
+    "CopsVsRobbers": "git@github.com:Barobo/CopsVsRobbers.git#develop",
+    "FactoringChallenge": "git@github.com:BaroboRobotics/FactoringChallenge.git#develop",
+    "LinkbotPythonCurriculum": "git@github.com:BaroboRobotics/LinkbotPythonCurriculum.git#develop",
+    "LinkbotUpdateApp": "git@github.com:BaroboRobotics/LinkbotUpdateApp.git#develop",
+    "Pianobot": "git@github.com:BaroboRobotics/Pianobot.git#develop",
+    "PoseTeachingApp": "git@github.com:BaroboRobotics/PoseTeachingApp.git#develop",
+    "linkbotjs": "git@github.com:BaroboRobotics/linkbotjs.git#develop",
     "jquery": "~2.1.4"
   }
 }
