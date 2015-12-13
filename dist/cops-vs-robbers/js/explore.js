@@ -19,49 +19,47 @@ angular.module('explore', []).filter('plusMinus', function() {
 }).controller('Explore', function($scope) {
   var bot, buttonCallback, robots, wheelCallback, _i, _len, _results;
   $scope.mockRobot = false;
-
+  robots = Linkbots.acquire(2).robots;
+  robots = [robots[1], robots[0]];
+  robots[0].color(255, 0, 0);
+  robots[1].color(0, 0, 255);
   buttonCallback = function(myRobot, data, event) {
     var activeTab;
     activeTab = $(".tab-pane.active");
-    return activeTab.scope().changeSelected(myRobot._id === redRobotParam ? 0 : 1, event.button === 0);
+    return activeTab.scope().changeSelected(myRobot._id === redRobot ? 0 : 1, event.button === 0);
   };
   wheelCallback = function(robot, data, event) {
     var activeTab;
     activeTab = $(".tab-pane.active");
-    return activeTab.scope().incrementSelected(robot._id === redRobotParam ? 0 : 1, event.triggerWheel === 1 ? event.difference < 0 : event.difference > 0);
+    return activeTab.scope().incrementSelected(robot._id === redRobot ? 0 : 1, event.triggerWheel === 1 ? event.difference < 0 : event.difference > 0);
   };
-  setTimeout(function() {
-    robots = Linkbots.acquire(2).robots;
-    robots = [robots[1], robots[0]];
-    robots[0].color(255, 0, 0);
-    robots[1].color(0, 0, 255);
-    for (_i = 0, _len = robots.length; _i < _len; _i++) {
-      bot = robots[_i];
-      var btnA = bot.BUTTON_A;
-      var btnB = bot.BUTTON_B;
-      var regObj = {
-        button: {
+  _results = [];
+  for (_i = 0, _len = robots.length; _i < _len; _i++) {
+    bot = robots[_i];
+    var btnA = bot.BUTTON_A;
+    var btnB = bot.BUTTON_B;
+    _results.push(bot.register({
+      button: {
+        btnA: {
+          callback: buttonCallback
         },
-        wheel: {
-          0: {
-            distance: 20,
-            callback: wheelCallback
-          },
-          2: {
-            distance: 20,
-            callback: wheelCallback
-          }
+        btnB: {
+          callback: buttonCallback
         }
-      };
-      regObj.button[btnA] = {
-        callback: buttonCallback
-      };
-      regObj.button[btnB] = {
-        callback: buttonCallback
-      };
-      bot.register(regObj);
-    }
-  }, 1000);
+      },
+      wheel: {
+        0: {
+          distance: 20,
+          callback: wheelCallback
+        },
+        2: {
+          distance: 20,
+          callback: wheelCallback
+        }
+      }
+    }));
+  }
+  return _results;
 }).controller('StandardEqns', function($scope) {
   $scope.selected = [0, 0];
   $scope.x1 = -1;
