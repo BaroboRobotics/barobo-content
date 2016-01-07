@@ -76,6 +76,7 @@
                 <button type="button" id="add-pathway-button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#addPathways">
                     <span style="font-size: 22px; text-shadow: 2px 2px #f9f9f9; font-weight: bold;">+ Learning Pathways</span>
                 </button>
+                <span class="add-content-text">Click here to add addition content</span>
 
                 <!-- Add Pathway Dialog -->
                 <div class="modal fade" id="addPathways" tabindex="-1" role="dialog" aria-labelledby="addPathwaysLabel" aria-hidden="true">
@@ -170,10 +171,19 @@
         $(document).ready(function () {
             function showPathways() {
                 var pathways = Linkbots.getPathways();
+                var showAddContent = true;
                 $('.labs-slider').addClass('hidden');
                 for (var i = 0; i < pathways.length; i++) {
                     $('#' + pathways[i] + '-pathway').removeClass('hidden');
                     $('#add-' + pathways[i] + '-checkbox').prop('checked', true);
+                    if (pathways[i] !== 'gettingstarted') {
+                        showAddContent = false;
+                    }
+                }
+                if (showAddContent) {
+                    $('.add-content-text').removeClass('hidden');
+                } else {
+                    $('.add-content-text').addClass('hidden');
                 }
             }
             $('#save-pathway').click(function() {
