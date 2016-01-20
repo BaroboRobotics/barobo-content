@@ -6,20 +6,23 @@
             You can use these to create a variety of colors with the Linkbot. In this section you will learn
             to control the color the Linkbot displays. Use the skills you learned in art class to make colors
             other than the three built into the Linkbot.</p>
-        <div class="code-snippet">
-            <pre><code class="hljs python"><div ng-show="m.displayAllCode" class="animate-show"><span class="hljs-comment">#!/usr/bin/env Python3</span>
-            
-<span class="hljs-comment"># Filename: Lesson01.py</span>
+        <div class="code-snippet" >
+            <pre><code class="hljs python" style="white-space: nowrap;">
+                <div ng-show="m.displayAllCode" class="animate-show">
+                    <span class="hljs-comment">#!/usr/bin/env Python3</span><br><br>
+                    <span class="hljs-comment"># Filename: Lesson01.py</span><br>
+                    import linkbot<br>
+                    import <span class="hljs-keyword">time</span><br><br>
 
-import linkbot
-import <span class="hljs-keyword">time</span>
-
-robot = linkbot.Linkbot('<span class="hljs-string" ng-bind="m.robot.id"></span>')</div>
-robot.setBuzzerFrequency(<span class="hljs-number" ng-model="m.buzzerFrequency" contenteditable="true" ng-change="change(this)">1046.5</span>)
-<span class="hljs-keyword">time</span>.<span class="hljs-keyword">sleep</span>(<span ng-model="m.sleep1" contenteditable="true" class="hljs-number">1.5</span>)
-robot.setBuzzerFrequency(<span class="hljs-number">0</span>)
-<span class="hljs-keyword">time</span>.<span class="hljs-keyword">sleep</span>(<span ng-model="m.sleep2" contenteditable="true" class="hljs-number">3</span>)
-robot.setLedColor(<span class="hljs-number" ng-model="m.led1" contenteditable="true">255</span>,<span ng-model="m.led2" contenteditable="true" class="hljs-number">0</span>,<span ng-model="m.led3" contenteditable="true" class="hljs-number">0</span>)
+                    robot = linkbot.Linkbot('<span class="hljs-string" ng-bind="m.robot.id"></span>')<br><br>
+                </div>
+                robot.setBuzzerFrequency(<modifiable number="true" mod-data="m.buzzerFrequency">{{m.buzzerFrequency}}</modifiable>)<br>
+                <span class="hljs-keyword">time</span>.<span class="hljs-keyword">sleep</span>(<modifiable number="true" mod-data="m.sleep1">{{m.sleep1}}</modifiable>)<br>
+                robot.setBuzzerFrequency(<span class="hljs-number">0</span>)<br>
+                <span class="hljs-keyword">time</span>.<span class="hljs-keyword">sleep</span>(<modifiable number="true" mod-data="m.sleep2">{{m.sleep2}}</modifiable>)<br>
+                robot.setLedColor(<modifiable number="true" mod-data="m.led1">{{m.led1}}</modifiable>,
+                <modifiable number="true" mod-data="m.led2">{{m.led2}}</modifiable>,
+                <modifiable number="true" mod-data="m.led3">{{m.led3}}</modifiable>)<br>
             </code></pre>
             <span ng-click="toggle()" class="code-snippet-tab glyphicon" ng-class="{'glyphicon-chevron-down': !m.displayAllCode, 'glyphicon-chevron-up': m.displayAllCode}"></span>
         </div>
@@ -31,8 +34,26 @@ robot.setLedColor(<span class="hljs-number" ng-model="m.led1" contenteditable="t
             Make all the numbers 255 to see what you get.  The maximum for each color is 255.</p>
         <hr />
         <div class="clearfix">
+            <a href="/introductory-python/index.html" ng-click="stopAcquisition()" class="btn btn-default pull-left">Introductory Python</a>
             <a href="#/lesson-two" ng-click="stopAcquisition()" class="btn btn-default pull-right">Next</a>
         </div>
+        <div class="radial-progress pull-right" data-progress="0" ng-non-bindable>
+            <div class="circle">
+                <div class="mask full">
+                    <div class="fill"></div>
+                </div>
+                <div class="mask half">
+                    <div class="fill"></div>
+                    <div class="fill fix"></div>
+                </div>
+                <div class="shadow"></div>
+            </div>
+            <div class="inset">
+                <div class="percentage">
+                    <div class="numbers"><span>-</span><span>0%</span><span>1%</span><span>2%</span><span>3%</span><span>4%</span><span>5%</span><span>6%</span><span>7%</span><span>8%</span><span>9%</span><span>10%</span><span>11%</span><span>12%</span><span>13%</span><span>14%</span><span>15%</span><span>16%</span><span>17%</span><span>18%</span><span>19%</span><span>20%</span><span>21%</span><span>22%</span><span>23%</span><span>24%</span><span>25%</span><span>26%</span><span>27%</span><span>28%</span><span>29%</span><span>30%</span><span>31%</span><span>32%</span><span>33%</span><span>34%</span><span>35%</span><span>36%</span><span>37%</span><span>38%</span><span>39%</span><span>40%</span><span>41%</span><span>42%</span><span>43%</span><span>44%</span><span>45%</span><span>46%</span><span>47%</span><span>48%</span><span>49%</span><span>50%</span><span>51%</span><span>52%</span><span>53%</span><span>54%</span><span>55%</span><span>56%</span><span>57%</span><span>58%</span><span>59%</span><span>60%</span><span>61%</span><span>62%</span><span>63%</span><span>64%</span><span>65%</span><span>66%</span><span>67%</span><span>68%</span><span>69%</span><span>70%</span><span>71%</span><span>72%</span><span>73%</span><span>74%</span><span>75%</span><span>76%</span><span>77%</span><span>78%</span><span>79%</span><span>80%</span><span>81%</span><span>82%</span><span>83%</span><span>84%</span><span>85%</span><span>86%</span><span>87%</span><span>88%</span><span>89%</span><span>90%</span><span>91%</span><span>92%</span><span>93%</span><span>94%</span><span>95%</span><span>96%</span><span>97%</span><span>98%</span><span>99%</span><span>100%</span></div>
+                </div>
+            </div>
+        </div>
     </div>
-   
+
 </div>

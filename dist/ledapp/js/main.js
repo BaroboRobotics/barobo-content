@@ -52,10 +52,6 @@ chapter2.controller('lessonOneController', ['$scope', '$timeout', '$interval', '
         robot: null,
         running: false
     };
-    $scope.change = function(e) {
-        console.log(e.target);
-        console.log('Buzzer frequencey: ' + $scope.m.buzzerFrequency);
-    };
     $scope.toggle = function() {
         $scope.m.displayAllCode = !$scope.m.displayAllCode;
     };
@@ -85,6 +81,11 @@ chapter2.controller('lessonOneController', ['$scope', '$timeout', '$interval', '
         robotFactory.unregister();
     };
     robotFactory.getRobots(setRobot, 1);
+    Linkbots.setNavigationTitle('Lesson 1');
+    Linkbots.setNavigationItems([{title:'Introductory Python', url:'/introductory-python/index.html'},
+        {title:'Chapter 2', url:'#/'}, {title:'Lesson 1', url:'#/'}]);
+    // 1/10 since it's the first of 10 lessons.
+    $('.radial-progress').attr('data-progress', Math.floor((1 / 9) * 100));
 }]).controller('lessonTwoController', ['$scope', '$timeout', '$interval', 'robotFactory', function($scope, $timeout, $interval, robotFactory) {
     var counter = 0;
     function setRobot(robots) {
@@ -135,6 +136,11 @@ chapter2.controller('lessonOneController', ['$scope', '$timeout', '$interval', '
         robotFactory.unregister();
     };
     robotFactory.getRobots(setRobot, 1);
+    Linkbots.setNavigationTitle('Lesson 2');
+    Linkbots.setNavigationItems([{title:'Introductory Python', url:'/introductory-python/index.html'},
+        {title:'Chapter 2', url:'#/'}, {title:'Lesson 2', url:'#/lesson-two'}]);
+    // 1/10 since it's the first of 10 lessons.
+    $('.radial-progress').attr('data-progress', Math.floor((2 / 9) * 100));
 }]).controller('lessonThreeController', ['$scope', '$timeout', '$interval', 'robotFactory', function($scope, $timeout, $interval, robotFactory) {
     var counter = 0;
     function setRobot(robots) {
@@ -191,6 +197,11 @@ chapter2.controller('lessonOneController', ['$scope', '$timeout', '$interval', '
         robotFactory.unregister();
     };
     robotFactory.getRobots(setRobot, 1);
+    Linkbots.setNavigationTitle('Lesson 3');
+    Linkbots.setNavigationItems([{title:'Introductory Python', url:'/introductory-python/index.html'},
+        {title:'Chapter 2', url:'#/'}, {title:'Lesson 3', url:'#/lesson-three'}]);
+    // 1/10 since it's the first of 10 lessons.
+    $('.radial-progress').attr('data-progress', Math.floor((3 / 9) * 100));
 }]).controller('lessonFourController', ['$scope', '$timeout', '$interval', 'robotFactory', function($scope, $timeout, $interval, robotFactory) {
     function setRobot(robots) {
         $scope.m.robot = robots[0];
@@ -229,6 +240,11 @@ chapter2.controller('lessonOneController', ['$scope', '$timeout', '$interval', '
     };
     robotFactory.getRobots(setRobot, 1);
     $scope.mphChange();
+    Linkbots.setNavigationTitle('Lesson 4');
+    Linkbots.setNavigationItems([{title:'Introductory Python', url:'/introductory-python/index.html'},
+        {title:'Chapter 2', url:'#/'}, {title:'Lesson 4', url:'#/lesson-four'}]);
+    // 1/10 since it's the first of 10 lessons.
+    $('.radial-progress').attr('data-progress', Math.floor((4 / 9) * 100));
 }]).controller('lessonFiveController', ['$scope', '$timeout', '$interval', 'robotFactory', function($scope, $timeout, $interval, robotFactory) {
     function setRobot(robots) {
         $scope.m.robot = robots[0];
@@ -280,6 +296,10 @@ chapter2.controller('lessonOneController', ['$scope', '$timeout', '$interval', '
         $scope.m.robot.register(regObj);
     };
     robotFactory.getRobots(setRobot, 1);
+    Linkbots.setNavigationTitle('Lesson 5');
+    Linkbots.setNavigationItems([{title:'Introductory Python', url:'/introductory-python/index.html'},
+        {title:'Chapter 2', url:'#/'}, {title:'Lesson 5', url:'#/lesson-five'}]);
+    $('.radial-progress').attr('data-progress', Math.floor((5 / 9) * 100));
 }]).controller('lessonSixController', ['$scope', '$timeout', '$interval', 'robotFactory', function($scope, $timeout, $interval, robotFactory) {
     function setRobot(robots) {
         $scope.m.robot = robots[0];
@@ -326,6 +346,10 @@ chapter2.controller('lessonOneController', ['$scope', '$timeout', '$interval', '
         $scope.m.robot.register(regObj);
     };
     robotFactory.getRobots(setRobot, 1);
+    Linkbots.setNavigationTitle('Lesson 6');
+    Linkbots.setNavigationItems([{title:'Introductory Python', url:'/introductory-python/index.html'},
+        {title:'Chapter 2', url:'#/'}, {title:'Lesson 6', url:'#/lesson-six'}]);
+    $('.radial-progress').attr('data-progress', Math.floor((6 / 9) * 100));
 }]).controller('lessonSevenAController', ['$scope', '$timeout', '$interval', 'robotFactory', function($scope, $timeout, $interval, robotFactory) {
     function setRobot(robots) {
         $scope.m.robot1 = robots[0];
@@ -404,6 +428,10 @@ chapter2.controller('lessonOneController', ['$scope', '$timeout', '$interval', '
         runLoop(led1, led2, led3, led4);
     };
     robotFactory.getRobots(setRobot, 2);
+    Linkbots.setNavigationTitle('Lesson 7a');
+    Linkbots.setNavigationItems([{title:'Introductory Python', url:'/introductory-python/index.html'},
+        {title:'Chapter 2', url:'#/'}, {title:'Lesson 7a', url:'#/lesson-seven-a'}]);
+    $('.radial-progress').attr('data-progress', Math.floor((7 / 9) * 100));
 }]).controller('lessonSevenBController', ['$scope', '$timeout', '$interval', 'robotFactory', function($scope, $timeout, $interval, robotFactory) {
     var counter = 0;
     function setRobot(robots) {
@@ -470,7 +498,10 @@ chapter2.controller('lessonOneController', ['$scope', '$timeout', '$interval', '
         runLoop(led1, led2, led3, led4, led5, led6, sleep1, sleep2);
     };
     robotFactory.getRobots(setRobot, 2);
-
+    Linkbots.setNavigationTitle('Lesson 7b');
+    Linkbots.setNavigationItems([{title:'Introductory Python', url:'/introductory-python/index.html'},
+        {title:'Chapter 2', url:'#/'}, {title:'Lesson 7b', url:'#/lesson-seven-b'}]);
+    $('.radial-progress').attr('data-progress', Math.floor((8 / 9) * 100));
 }]).controller('lessonSevenCController', ['$scope', '$timeout', '$interval', 'robotFactory', function($scope, $timeout, $interval, robotFactory) {
     var ctr1 = 0, ctr2 = 0, ctr3 = 0;
     function setRobot(robots) {
@@ -578,47 +609,39 @@ chapter2.controller('lessonOneController', ['$scope', '$timeout', '$interval', '
         runBlock1();
     };
     robotFactory.getRobots(setRobot, 2);
-
+    Linkbots.setNavigationTitle('Lesson 7c');
+    Linkbots.setNavigationItems([{title:'Introductory Python', url:'/introductory-python/index.html'},
+        {title:'Chapter 2', url:'#/'}, {title:'Lesson 7c', url:'#/lesson-seven-c'}]);
+    $('.radial-progress').attr('data-progress', Math.floor((9 / 9) * 100));
 }]);
 
 /**
  * Created by Adam on 2/22/2015.
  */
-chapter2.directive('contenteditable', ['$sce', function($sce) {
+chapter2.directive('modifiable', ['$timeout', function($timeout) {
     return {
-        restrict: 'A', // only activate on element attribute
-        require: '?ngModel', // get a hold of NgModelController
-        link: function(scope, element, attrs, ngModel) {
-            if (!ngModel) return; // do nothing if no ng-model
-
-            // Specify how UI should be updated
-            ngModel.$render = function() {
-                element.html($sce.getTrustedHtml(ngModel.$viewValue || ''));
-            };
-
-            // Listen for change events to enable binding
-            element.on('blur change', function() {
-                scope.$evalAsync(read);
-            });
-            read(); // initialize
-            // Write data to the model
-            function read() {
-                var html = element.html();
-                // When we clear the content editable the browser leaves a <br> behind
-                // If strip-br attribute is provided then we strip this out
-                if ( attrs.stripBr && html == '<br>' ) {
-                    html = '';
-                }
-                if (isNaN(html)) {
-                    html = parseFloat(html.replace(/[^0-9\.]+/g, ''));
-                    if (isNan(html)) {
-                        html = 0;
+        restrict: 'E',
+        transclude: true,
+        template: '<span class="{{inputClass}} modifiable" ng-hide="modifying" ng-click="modifying = modifying ? false : true" ng-transclude></span><input type="{{inputType}}" ng-model="modData" ng-show="modifying" ng-blur="modifying = false" />',
+        scope: {
+            modData: '='
+        },
+        link: {
+            pre: function(scope, element, attrs) {
+                scope.inputType = attrs.number ? "number" : "text";
+                scope.inputClass = attrs.number ? "hljs-number" : "hljs-string";
+            },
+            post: function(scope, element) {
+                scope.$watch('modifying', function(newValue, oldValue) {
+                    var inputElement;
+                    if (newValue && !oldValue) {
+                        inputElement = element.children()[1];
+                        $timeout(function() {
+                            inputElement.focus();
+                            inputElement.select();
+                        }, 10);
                     }
-                    ngModel.$setViewValue(html);
-                    element.html(html);
-                } else {
-                    ngModel.$setViewValue(html);
-                }
+                });
             }
         }
     };

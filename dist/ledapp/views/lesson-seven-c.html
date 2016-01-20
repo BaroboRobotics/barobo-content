@@ -5,37 +5,50 @@
         <p>One Linkbot blinks three times then pauses two seconds while staying on.
             A second Linkbot then blinks twice, pauses one second, and goes out again. Repeat process four times.</p>
         <div class="code-snippet">
-        <pre><code class="hljs python"><div ng-show="m.displayAllCode"><span class="hljs-comment">#!/usr/bin/env python3</span>
+            <pre><code class="hljs python" style="white-space: nowrap;">
+                <div ng-show="m.displayAllCode">
+                    <span class="hljs-comment">#!/usr/bin/env python3</span><br><br>
+                    <span class="hljs-comment"># Filename: Lesson07c.py</span><br>
+                    import linkbot<br>
+                    import <span class="hljs-keyword">time</span><br><br>
 
-<span class="hljs-comment"># Filename: Lesson07c.py</span>
-
-import linkbot
-import <span class="hljs-keyword">time</span>
-
-robot1 = linkbot.Linkbot('<span class="hljs-string" ng-bind="m.robot1.id"></span>')<span class="hljs-comment">#ID for first Linkbot</span>
-robot2 = linkbot.Linkbot('<span class="hljs-string" ng-bind="m.robot2.id"></span>')<span class="hljs-comment">#ID for second Lnkbot</span></div>
-<span class="hljs-keyword">for</span> i in range (<span class="hljs-number">1</span>,<span class="hljs-number">5</span>): <span class="hljs-comment">#does the following block 4 times</span>
-    <span class="hljs-keyword">for</span> k in range (<span class="hljs-number">1</span>,<span class="hljs-number">4</span>): <span class="hljs-comment">#does the following block 3 times</span>
-        robot1.setLedColor(<span ng-model="m.led1[0]" contenteditable="true" class="hljs-number">255</span>,<span ng-model="m.led1[1]" contenteditable="true" class="hljs-number">0</span>,<span  ng-model="m.led1[2]" contenteditable="true" class="hljs-number">0</span>)<span class="hljs-comment">#changes LED on robot1 to red</span>
-        robot2.setLedColor(<span ng-model="m.led2[0]" contenteditable="true" class="hljs-number">0</span>,<span ng-model="m.led2[1]" contenteditable="true" class="hljs-number">0</span>,<span  ng-model="m.led2[2]" contenteditable="true" class="hljs-number">0</span>)<span class="hljs-comment">#turns LED on robot2 to off</span>
-        <span class="hljs-keyword">time</span>.<span class="hljs-keyword">sleep</span>(.<span class="hljs-number">5</span>) <span class="hljs-comment">#waits half a second</span>
-        robot1.setLedColor(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>) <span class="hljs-comment">#turns LED on robot1 off</span>
-        robot2.setLedColor(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>)<span class="hljs-comment">#turns LED on robot2 off</span>
-        <span class="hljs-keyword">time</span>.<span class="hljs-keyword">sleep</span>(.<span class="hljs-number">5</span>)<span class="hljs-comment"># waits half a second</span>
-    robot1.setLedColor(<span ng-model="m.led3[0]" contenteditable="true" class="hljs-number">255</span>,<span ng-model="m.led3[1]" contenteditable="true" class="hljs-number">0</span>,<span ng-model="m.led3[2]" contenteditable="true" class="hljs-number">0</span>)
-    robot2.setLedColor(<span ng-model="m.led4[0]" contenteditable="true" class="hljs-number">0</span>,<span ng-model="m.led4[1]" contenteditable="true" class="hljs-number">0</span>,<span ng-model="m.led4[2]" contenteditable="true" class="hljs-number">0</span>)
-    <span class="hljs-keyword">time</span>.<span class="hljs-keyword">sleep</span>(<span class="hljs-number">2</span>)
-    <span class="hljs-keyword">for</span> k in range (<span class="hljs-number">1</span>,<span class="hljs-number">3</span>):  <span class="hljs-comment">#does the following block 2 times</span>
-        robot1.setLedColor(<span ng-model="m.led5[0]" contenteditable="true" class="hljs-number">0</span>,<span ng-model="m.led5[1]" contenteditable="true" class="hljs-number">0</span>,<span ng-model="m.led5[2]" contenteditable="true" class="hljs-number">0</span>)<span class="hljs-comment">#turns LED on robot1 off</span>
-        robot2.setLedColor(<span ng-model="m.led6[0]" contenteditable="true" class="hljs-number">255</span>,<span ng-model="m.led6[1]" contenteditable="true" class="hljs-number">0</span>,<span ng-model="m.led6[2]" contenteditable="true" class="hljs-number">0</span>)<span class="hljs-comment">#turns LED on robot2 to red</span>
-        <span class="hljs-keyword">time</span>.<span class="hljs-keyword">sleep</span>(.<span class="hljs-number">5</span>) <span class="hljs-comment">#waits half a second</span>
-        robot1.setLedColor(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>)<span class="hljs-comment">#turns LED on robot1 off</span>
-        robot2.setLedColor(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>)<span class="hljs-comment">#turns LED on robot2 off</span>
-        <span class="hljs-keyword">time</span>.<span class="hljs-keyword">sleep</span>(.<span class="hljs-number">5</span>)<span class="hljs-comment"># waits half a second</span>
-    <span class="hljs-keyword">time</span>.<span class="hljs-keyword">sleep</span>(<span class="hljs-number">1</span>)
-robot1.setLedColor(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">255</span>) <span class="hljs-comment">#returns LED to blue</span>
-robot2.setLedColor(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">255</span>) <span class="hljs-comment">#returns LED to blue</span>
-        </code></pre>
+                    robot1 = linkbot.Linkbot('<span class="hljs-string" ng-bind="m.robot1.id"></span>') <span class="hljs-comment"># ID for first Linkbot</span><br>
+                    robot2 = linkbot.Linkbot('<span class="hljs-string" ng-bind="m.robot2.id"></span>') <span class="hljs-comment"># ID for second Lnkbot</span><br><br>
+                </div>
+                <span class="hljs-keyword">for</span> i in range (<span class="hljs-number">1</span>, <span class="hljs-number">5</span>): <span class="hljs-comment"># does the following block 4 times</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword">for</span> k in range (<span class="hljs-number">1</span>, <span class="hljs-number">4</span>): <span class="hljs-comment"># does the following block 3 times</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;robot1.setLedColor(<modifiable number="true" mod-data="m.led1[0]">{{m.led1[0]}}</modifiable>,
+                <modifiable number="true" mod-data="m.led1[1]">{{m.led1[1]}}</modifiable>,
+                <modifiable number="true" mod-data="m.led1[2]">{{m.led1[2]}}</modifiable>) <span class="hljs-comment"># changes LED on robot1 to red</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;robot2.setLedColor(<modifiable number="true" mod-data="m.led2[0]">{{m.led2[0]}}</modifiable>,
+                <modifiable number="true" mod-data="m.led2[1]">{{m.led2[1]}}</modifiable>,
+                <modifiable number="true" mod-data="m.led2[2]">{{m.led2[2]}}</modifiable>) <span class="hljs-comment"># turns LED on robot2 to off</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword">time</span>.<span class="hljs-keyword">sleep</span>(.<span class="hljs-number">5</span>) <span class="hljs-comment"># waits half a second</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;robot1.setLedColor(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>) <span class="hljs-comment"># turns LED on robot1 off</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;robot2.setLedColor(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>) <span class="hljs-comment"># turns LED on robot2 off</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword">time</span>.<span class="hljs-keyword">sleep</span>(.<span class="hljs-number">5</span>) <span class="hljs-comment"># waits half a second</span><br><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;robot1.setLedColor(<modifiable number="true" mod-data="m.led3[0]">{{m.led3[0]}}</modifiable>,
+                <modifiable number="true" mod-data="m.led3[1]">{{m.led3[1]}}</modifiable>,
+                <modifiable number="true" mod-data="m.led3[2]">{{m.led3[2]}}</modifiable>)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;robot2.setLedColor(<modifiable number="true" mod-data="m.led4[0]">{{m.led4[0]}}</modifiable>,
+                <modifiable number="true" mod-data="m.led4[1]">{{m.led4[1]}}</modifiable>,
+                <modifiable number="true" mod-data="m.led4[2]">{{m.led4[2]}}</modifiable>)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword">time</span>.<span class="hljs-keyword">sleep</span>(<span class="hljs-number">2</span>)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword">for</span> k in range (<span class="hljs-number">1</span>, <span class="hljs-number">3</span>): <span class="hljs-comment"># does the following block 2 times</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;robot1.setLedColor(<modifiable number="true" mod-data="m.led5[0]">{{m.led5[0]}}</modifiable>,
+                <modifiable number="true" mod-data="m.led5[1]">{{m.led5[1]}}</modifiable>,
+                <modifiable number="true" mod-data="m.led5[2]">{{m.led5[2]}}</modifiable>) <span class="hljs-comment"># turns LED on robot1 off</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;robot2.setLedColor(<modifiable number="true" mod-data="m.led6[0]">{{m.led6[0]}}</modifiable>,
+                <modifiable number="true" mod-data="m.led6[1]">{{m.led6[1]}}</modifiable>,
+                <modifiable number="true" mod-data="m.led6[2]">{{m.led6[2]}}</modifiable>) <span class="hljs-comment"># turns LED on robot2 to red</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword">time</span>.<span class="hljs-keyword">sleep</span>(.<span class="hljs-number">5</span>) <span class="hljs-comment"># waits half a second</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;robot1.setLedColor(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>) <span class="hljs-comment"># turns LED on robot1 off</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;robot2.setLedColor(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>) <span class="hljs-comment"># turns LED on robot2 off</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword">time</span>.<span class="hljs-keyword">sleep</span>(.<span class="hljs-number">5</span>) <span class="hljs-comment"># waits half a second</span><br><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-keyword">time</span>.<span class="hljs-keyword">sleep</span>(<span class="hljs-number">1</span>)<br><br>
+                robot1.setLedColor(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">255</span>) <span class="hljs-comment">#returns LED to blue</span><br>
+                robot2.setLedColor(<span class="hljs-number">0</span>, <span class="hljs-number">0</span> ,<span class="hljs-number">255</span>) <span class="hljs-comment">#returns LED to blue</span><br>
+            </code></pre>
             <span ng-click="toggle()" class="code-snippet-tab glyphicon" ng-class="{'glyphicon-chevron-down': !m.displayAllCode, 'glyphicon-chevron-up': m.displayAllCode}"></span>
         </div>
         <button class="btn btn-primary" ng-class="{true: 'disabled'}[m.robot1 == null || m.robot2 == null || m.running]" ng-click="run()">Run</button>
@@ -44,6 +57,24 @@ robot2.setLedColor(<span class="hljs-number">0</span>,<span class="hljs-number">
         <hr />
         <div class="clearfix">
             <a href="#/lesson-seven-b" ng-click="stopAcquisition()" class="btn btn-default pull-left">Prev</a>
+            <a href="/introductory-python/index.html" ng-click="stopAcquisition()" class="btn btn-default pull-right">Introductory Python</a>
+        </div>
+        <div class="radial-progress pull-right" data-progress="0" ng-non-bindable>
+            <div class="circle">
+                <div class="mask full">
+                    <div class="fill"></div>
+                </div>
+                <div class="mask half">
+                    <div class="fill"></div>
+                    <div class="fill fix"></div>
+                </div>
+                <div class="shadow"></div>
+            </div>
+            <div class="inset">
+                <div class="percentage">
+                    <div class="numbers"><span>-</span><span>0%</span><span>1%</span><span>2%</span><span>3%</span><span>4%</span><span>5%</span><span>6%</span><span>7%</span><span>8%</span><span>9%</span><span>10%</span><span>11%</span><span>12%</span><span>13%</span><span>14%</span><span>15%</span><span>16%</span><span>17%</span><span>18%</span><span>19%</span><span>20%</span><span>21%</span><span>22%</span><span>23%</span><span>24%</span><span>25%</span><span>26%</span><span>27%</span><span>28%</span><span>29%</span><span>30%</span><span>31%</span><span>32%</span><span>33%</span><span>34%</span><span>35%</span><span>36%</span><span>37%</span><span>38%</span><span>39%</span><span>40%</span><span>41%</span><span>42%</span><span>43%</span><span>44%</span><span>45%</span><span>46%</span><span>47%</span><span>48%</span><span>49%</span><span>50%</span><span>51%</span><span>52%</span><span>53%</span><span>54%</span><span>55%</span><span>56%</span><span>57%</span><span>58%</span><span>59%</span><span>60%</span><span>61%</span><span>62%</span><span>63%</span><span>64%</span><span>65%</span><span>66%</span><span>67%</span><span>68%</span><span>69%</span><span>70%</span><span>71%</span><span>72%</span><span>73%</span><span>74%</span><span>75%</span><span>76%</span><span>77%</span><span>78%</span><span>79%</span><span>80%</span><span>81%</span><span>82%</span><span>83%</span><span>84%</span><span>85%</span><span>86%</span><span>87%</span><span>88%</span><span>89%</span><span>90%</span><span>91%</span><span>92%</span><span>93%</span><span>94%</span><span>95%</span><span>96%</span><span>97%</span><span>98%</span><span>99%</span><span>100%</span></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

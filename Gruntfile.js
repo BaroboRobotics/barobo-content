@@ -18,6 +18,7 @@ module.exports = function(grunt) {
                     {expand: true, cwd: 'apps/FactoringChallenge/html', src: '**/*', dest: 'dist/factoring-challenge'},
                     {expand: true, cwd: 'apps/LinkbotPythonCurriculum/html', src: '**/*', dest: 'dist/python'},
                     {expand: true, cwd: 'apps/Pianobot/html', src: '**/*', dest: 'dist/pianobot'},
+                    {expand: true, cwd: 'apps/PythonChapter2App/dist', src: '**/*', dest: 'dist/ledapp'},
                     {expand: true, cwd: 'apps/PoseTeachingApp/html', src: '**/*', dest: 'dist/pose-teaching'},
                     {expand: true, cwd: 'apps/linkbotjs/dist', src: '**/*', dest: 'dist/linkbotjs'},
                     {expand: true, cwd: 'apps/linkbotjs/dist', src: '**/*', dest: 'startup/js/linkbotjs'},
