@@ -172,6 +172,13 @@
 	height: 170px;
 	padding-top: 140px;
 }
+#blockly-icon {
+	background: #cfcfcf;
+	background-size: 170px 170px;
+	width: 170px;
+	height: 170px;
+	padding-top: 140px;
+}
 .labs-orange-right, .labs-orange-left, .labs-blue-right, .labs-blue-left, .labs-default-right, .labs-default-left,  .labs-green-right, .labs-green-left {
 	width: 28px;
 	height: 86px;
