@@ -64,65 +64,6 @@ var asyncBaroboBridge = (function(main) {
 })(this);
 
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-var queue = [];
-var draining = false;
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    draining = true;
-    var currentQueue;
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        var i = -1;
-        while (++i < len) {
-            currentQueue[i]();
-        }
-        len = queue.length;
-    }
-    draining = false;
-}
-process.nextTick = function (fun) {
-    queue.push(fun);
-    if (!draining) {
-        setTimeout(drainQueue, 0);
-    }
-};
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-},{}],2:[function(require,module,exports){
 var pSlice = Array.prototype.slice;
 var objectKeys = require('./lib/keys.js');
 var isArguments = require('./lib/is_arguments.js');
@@ -218,7 +159,7 @@ function objEquiv(a, b, opts) {
   return typeof a === typeof b;
 }
 
-},{"./lib/is_arguments.js":3,"./lib/keys.js":4}],3:[function(require,module,exports){
+},{"./lib/is_arguments.js":2,"./lib/keys.js":3}],2:[function(require,module,exports){
 var supportsArgumentsClass = (function(){
   return Object.prototype.toString.call(arguments)
 })() == '[object Arguments]';
@@ -240,7 +181,7 @@ function unsupported(object){
     false;
 };
 
-},{}],4:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 exports = module.exports = typeof Object.keys === 'function'
   ? Object.keys : shim;
 
@@ -250,6 +191,98 @@ function shim (obj) {
   for (var key in obj) keys.push(key);
   return keys;
 }
+
+},{}],4:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = setTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            currentQueue[queueIndex].run();
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    clearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (!draining) {
+        setTimeout(drainQueue, 0);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
 
 },{}],5:[function(require,module,exports){
 /**
@@ -754,7 +787,7 @@ var CSSPropertyOperations = {
 module.exports = CSSPropertyOperations;
 
 }).call(this,require('_process'))
-},{"./CSSProperty":7,"./ExecutionEnvironment":25,"./camelizeStyleName":104,"./dangerousStyleValue":109,"./hyphenateStyleName":128,"./memoizeStringOnly":139,"./warning":149,"_process":1}],9:[function(require,module,exports){
+},{"./CSSProperty":7,"./ExecutionEnvironment":25,"./camelizeStyleName":104,"./dangerousStyleValue":109,"./hyphenateStyleName":128,"./memoizeStringOnly":139,"./warning":149,"_process":4}],9:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -854,7 +887,7 @@ PooledClass.addPoolingTo(CallbackQueue);
 module.exports = CallbackQueue;
 
 }).call(this,require('_process'))
-},{"./Object.assign":30,"./PooledClass":31,"./invariant":130,"_process":1}],10:[function(require,module,exports){
+},{"./Object.assign":30,"./PooledClass":31,"./invariant":130,"_process":4}],10:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -1695,7 +1728,7 @@ var DOMChildrenOperations = {
 module.exports = DOMChildrenOperations;
 
 }).call(this,require('_process'))
-},{"./Danger":16,"./ReactMultiChildUpdateTypes":69,"./getTextContentAccessor":125,"./invariant":130,"_process":1}],14:[function(require,module,exports){
+},{"./Danger":16,"./ReactMultiChildUpdateTypes":69,"./getTextContentAccessor":125,"./invariant":130,"_process":4}],14:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -1994,7 +2027,7 @@ var DOMProperty = {
 module.exports = DOMProperty;
 
 }).call(this,require('_process'))
-},{"./invariant":130,"_process":1}],15:[function(require,module,exports){
+},{"./invariant":130,"_process":4}],15:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -2191,7 +2224,7 @@ var DOMPropertyOperations = {
 module.exports = DOMPropertyOperations;
 
 }).call(this,require('_process'))
-},{"./DOMProperty":14,"./escapeTextForBrowser":113,"./memoizeStringOnly":139,"./warning":149,"_process":1}],16:[function(require,module,exports){
+},{"./DOMProperty":14,"./escapeTextForBrowser":113,"./memoizeStringOnly":139,"./warning":149,"_process":4}],16:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -2377,7 +2410,7 @@ var Danger = {
 module.exports = Danger;
 
 }).call(this,require('_process'))
-},{"./ExecutionEnvironment":25,"./createNodesFromMarkup":108,"./emptyFunction":111,"./getMarkupWrap":122,"./invariant":130,"_process":1}],17:[function(require,module,exports){
+},{"./ExecutionEnvironment":25,"./createNodesFromMarkup":108,"./emptyFunction":111,"./getMarkupWrap":122,"./invariant":130,"_process":4}],17:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -2719,7 +2752,7 @@ var EventListener = {
 module.exports = EventListener;
 
 }).call(this,require('_process'))
-},{"./emptyFunction":111,"_process":1}],21:[function(require,module,exports){
+},{"./emptyFunction":111,"_process":4}],21:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -2995,7 +3028,7 @@ var EventPluginHub = {
 module.exports = EventPluginHub;
 
 }).call(this,require('_process'))
-},{"./EventPluginRegistry":22,"./EventPluginUtils":23,"./accumulateInto":101,"./forEachAccumulated":116,"./invariant":130,"_process":1}],22:[function(require,module,exports){
+},{"./EventPluginRegistry":22,"./EventPluginUtils":23,"./accumulateInto":101,"./forEachAccumulated":116,"./invariant":130,"_process":4}],22:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -3275,7 +3308,7 @@ var EventPluginRegistry = {
 module.exports = EventPluginRegistry;
 
 }).call(this,require('_process'))
-},{"./invariant":130,"_process":1}],23:[function(require,module,exports){
+},{"./invariant":130,"_process":4}],23:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -3496,7 +3529,7 @@ var EventPluginUtils = {
 module.exports = EventPluginUtils;
 
 }).call(this,require('_process'))
-},{"./EventConstants":19,"./invariant":130,"_process":1}],24:[function(require,module,exports){
+},{"./EventConstants":19,"./invariant":130,"_process":4}],24:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -3638,7 +3671,7 @@ var EventPropagators = {
 module.exports = EventPropagators;
 
 }).call(this,require('_process'))
-},{"./EventConstants":19,"./EventPluginHub":21,"./accumulateInto":101,"./forEachAccumulated":116,"_process":1}],25:[function(require,module,exports){
+},{"./EventConstants":19,"./EventPluginHub":21,"./accumulateInto":101,"./forEachAccumulated":116,"_process":4}],25:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -4031,7 +4064,7 @@ var LinkedValueUtils = {
 module.exports = LinkedValueUtils;
 
 }).call(this,require('_process'))
-},{"./ReactPropTypes":76,"./invariant":130,"_process":1}],28:[function(require,module,exports){
+},{"./ReactPropTypes":76,"./invariant":130,"_process":4}],28:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014, Facebook, Inc.
@@ -4081,7 +4114,7 @@ var LocalEventTrapMixin = {
 module.exports = LocalEventTrapMixin;
 
 }).call(this,require('_process'))
-},{"./ReactBrowserEventEmitter":34,"./accumulateInto":101,"./forEachAccumulated":116,"./invariant":130,"_process":1}],29:[function(require,module,exports){
+},{"./ReactBrowserEventEmitter":34,"./accumulateInto":101,"./forEachAccumulated":116,"./invariant":130,"_process":4}],29:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -4302,7 +4335,7 @@ var PooledClass = {
 module.exports = PooledClass;
 
 }).call(this,require('_process'))
-},{"./invariant":130,"_process":1}],32:[function(require,module,exports){
+},{"./invariant":130,"_process":4}],32:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -4490,7 +4523,7 @@ React.version = '0.12.2';
 module.exports = React;
 
 }).call(this,require('_process'))
-},{"./DOMPropertyOperations":15,"./EventPluginUtils":23,"./ExecutionEnvironment":25,"./Object.assign":30,"./ReactChildren":35,"./ReactComponent":36,"./ReactCompositeComponent":38,"./ReactContext":39,"./ReactCurrentOwner":40,"./ReactDOM":41,"./ReactDOMComponent":43,"./ReactDefaultInjection":53,"./ReactElement":56,"./ReactElementValidator":57,"./ReactInstanceHandles":64,"./ReactLegacyElement":65,"./ReactMount":67,"./ReactMultiChild":68,"./ReactPerf":72,"./ReactPropTypes":76,"./ReactServerRendering":80,"./ReactTextComponent":82,"./deprecated":110,"./onlyChild":141,"_process":1}],33:[function(require,module,exports){
+},{"./DOMPropertyOperations":15,"./EventPluginUtils":23,"./ExecutionEnvironment":25,"./Object.assign":30,"./ReactChildren":35,"./ReactComponent":36,"./ReactCompositeComponent":38,"./ReactContext":39,"./ReactCurrentOwner":40,"./ReactDOM":41,"./ReactDOMComponent":43,"./ReactDefaultInjection":53,"./ReactElement":56,"./ReactElementValidator":57,"./ReactInstanceHandles":64,"./ReactLegacyElement":65,"./ReactMount":67,"./ReactMultiChild":68,"./ReactPerf":72,"./ReactPropTypes":76,"./ReactServerRendering":80,"./ReactTextComponent":82,"./deprecated":110,"./onlyChild":141,"_process":4}],33:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -4533,7 +4566,7 @@ var ReactBrowserComponentMixin = {
 module.exports = ReactBrowserComponentMixin;
 
 }).call(this,require('_process'))
-},{"./ReactEmptyComponent":58,"./ReactMount":67,"./invariant":130,"_process":1}],34:[function(require,module,exports){
+},{"./ReactEmptyComponent":58,"./ReactMount":67,"./invariant":130,"_process":4}],34:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -5038,7 +5071,7 @@ var ReactChildren = {
 module.exports = ReactChildren;
 
 }).call(this,require('_process'))
-},{"./PooledClass":31,"./traverseAllChildren":148,"./warning":149,"_process":1}],36:[function(require,module,exports){
+},{"./PooledClass":31,"./traverseAllChildren":148,"./warning":149,"_process":4}],36:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -5481,7 +5514,7 @@ var ReactComponent = {
 module.exports = ReactComponent;
 
 }).call(this,require('_process'))
-},{"./Object.assign":30,"./ReactElement":56,"./ReactOwner":71,"./ReactUpdates":83,"./invariant":130,"./keyMirror":136,"_process":1}],37:[function(require,module,exports){
+},{"./Object.assign":30,"./ReactElement":56,"./ReactOwner":71,"./ReactUpdates":83,"./invariant":130,"./keyMirror":136,"_process":4}],37:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -5603,7 +5636,7 @@ var ReactComponentBrowserEnvironment = {
 module.exports = ReactComponentBrowserEnvironment;
 
 }).call(this,require('_process'))
-},{"./ReactDOMIDOperations":45,"./ReactMarkupChecksum":66,"./ReactMount":67,"./ReactPerf":72,"./ReactReconcileTransaction":78,"./getReactRootElementInContainer":124,"./invariant":130,"./setInnerHTML":144,"_process":1}],38:[function(require,module,exports){
+},{"./ReactDOMIDOperations":45,"./ReactMarkupChecksum":66,"./ReactMount":67,"./ReactPerf":72,"./ReactReconcileTransaction":78,"./getReactRootElementInContainer":124,"./invariant":130,"./setInnerHTML":144,"_process":4}],38:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -7043,7 +7076,7 @@ var ReactCompositeComponent = {
 module.exports = ReactCompositeComponent;
 
 }).call(this,require('_process'))
-},{"./Object.assign":30,"./ReactComponent":36,"./ReactContext":39,"./ReactCurrentOwner":40,"./ReactElement":56,"./ReactElementValidator":57,"./ReactEmptyComponent":58,"./ReactErrorUtils":59,"./ReactLegacyElement":65,"./ReactOwner":71,"./ReactPerf":72,"./ReactPropTransferer":73,"./ReactPropTypeLocationNames":74,"./ReactPropTypeLocations":75,"./ReactUpdates":83,"./instantiateReactComponent":129,"./invariant":130,"./keyMirror":136,"./keyOf":137,"./mapObject":138,"./monitorCodeUse":140,"./shouldUpdateReactComponent":146,"./warning":149,"_process":1}],39:[function(require,module,exports){
+},{"./Object.assign":30,"./ReactComponent":36,"./ReactContext":39,"./ReactCurrentOwner":40,"./ReactElement":56,"./ReactElementValidator":57,"./ReactEmptyComponent":58,"./ReactErrorUtils":59,"./ReactLegacyElement":65,"./ReactOwner":71,"./ReactPerf":72,"./ReactPropTransferer":73,"./ReactPropTypeLocationNames":74,"./ReactPropTypeLocations":75,"./ReactUpdates":83,"./instantiateReactComponent":129,"./invariant":130,"./keyMirror":136,"./keyOf":137,"./mapObject":138,"./monitorCodeUse":140,"./shouldUpdateReactComponent":146,"./warning":149,"_process":4}],39:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -7322,7 +7355,7 @@ var ReactDOM = mapObject({
 module.exports = ReactDOM;
 
 }).call(this,require('_process'))
-},{"./ReactElement":56,"./ReactElementValidator":57,"./ReactLegacyElement":65,"./mapObject":138,"_process":1}],42:[function(require,module,exports){
+},{"./ReactElement":56,"./ReactElementValidator":57,"./ReactLegacyElement":65,"./mapObject":138,"_process":4}],42:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -7874,7 +7907,7 @@ assign(
 module.exports = ReactDOMComponent;
 
 }).call(this,require('_process'))
-},{"./CSSPropertyOperations":8,"./DOMProperty":14,"./DOMPropertyOperations":15,"./Object.assign":30,"./ReactBrowserComponentMixin":33,"./ReactBrowserEventEmitter":34,"./ReactComponent":36,"./ReactMount":67,"./ReactMultiChild":68,"./ReactPerf":72,"./escapeTextForBrowser":113,"./invariant":130,"./isEventSupported":131,"./keyOf":137,"./monitorCodeUse":140,"_process":1}],44:[function(require,module,exports){
+},{"./CSSPropertyOperations":8,"./DOMProperty":14,"./DOMPropertyOperations":15,"./Object.assign":30,"./ReactBrowserComponentMixin":33,"./ReactBrowserEventEmitter":34,"./ReactComponent":36,"./ReactMount":67,"./ReactMultiChild":68,"./ReactPerf":72,"./escapeTextForBrowser":113,"./invariant":130,"./isEventSupported":131,"./keyOf":137,"./monitorCodeUse":140,"_process":4}],44:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -8110,7 +8143,7 @@ var ReactDOMIDOperations = {
 module.exports = ReactDOMIDOperations;
 
 }).call(this,require('_process'))
-},{"./CSSPropertyOperations":8,"./DOMChildrenOperations":13,"./DOMPropertyOperations":15,"./ReactMount":67,"./ReactPerf":72,"./invariant":130,"./setInnerHTML":144,"_process":1}],46:[function(require,module,exports){
+},{"./CSSPropertyOperations":8,"./DOMChildrenOperations":13,"./DOMPropertyOperations":15,"./ReactMount":67,"./ReactPerf":72,"./invariant":130,"./setInnerHTML":144,"_process":4}],46:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -8336,7 +8369,7 @@ var ReactDOMInput = ReactCompositeComponent.createClass({
 module.exports = ReactDOMInput;
 
 }).call(this,require('_process'))
-},{"./AutoFocusMixin":5,"./DOMPropertyOperations":15,"./LinkedValueUtils":27,"./Object.assign":30,"./ReactBrowserComponentMixin":33,"./ReactCompositeComponent":38,"./ReactDOM":41,"./ReactElement":56,"./ReactMount":67,"./ReactUpdates":83,"./invariant":130,"_process":1}],48:[function(require,module,exports){
+},{"./AutoFocusMixin":5,"./DOMPropertyOperations":15,"./LinkedValueUtils":27,"./Object.assign":30,"./ReactBrowserComponentMixin":33,"./ReactCompositeComponent":38,"./ReactDOM":41,"./ReactElement":56,"./ReactMount":67,"./ReactUpdates":83,"./invariant":130,"_process":4}],48:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -8389,7 +8422,7 @@ var ReactDOMOption = ReactCompositeComponent.createClass({
 module.exports = ReactDOMOption;
 
 }).call(this,require('_process'))
-},{"./ReactBrowserComponentMixin":33,"./ReactCompositeComponent":38,"./ReactDOM":41,"./ReactElement":56,"./warning":149,"_process":1}],49:[function(require,module,exports){
+},{"./ReactBrowserComponentMixin":33,"./ReactCompositeComponent":38,"./ReactDOM":41,"./ReactElement":56,"./warning":149,"_process":4}],49:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -8923,7 +8956,7 @@ var ReactDOMTextarea = ReactCompositeComponent.createClass({
 module.exports = ReactDOMTextarea;
 
 }).call(this,require('_process'))
-},{"./AutoFocusMixin":5,"./DOMPropertyOperations":15,"./LinkedValueUtils":27,"./Object.assign":30,"./ReactBrowserComponentMixin":33,"./ReactCompositeComponent":38,"./ReactDOM":41,"./ReactElement":56,"./ReactUpdates":83,"./invariant":130,"./warning":149,"_process":1}],52:[function(require,module,exports){
+},{"./AutoFocusMixin":5,"./DOMPropertyOperations":15,"./LinkedValueUtils":27,"./Object.assign":30,"./ReactBrowserComponentMixin":33,"./ReactCompositeComponent":38,"./ReactDOM":41,"./ReactElement":56,"./ReactUpdates":83,"./invariant":130,"./warning":149,"_process":4}],52:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -9125,7 +9158,7 @@ module.exports = {
 };
 
 }).call(this,require('_process'))
-},{"./BeforeInputEventPlugin":6,"./ChangeEventPlugin":10,"./ClientReactRootIndex":11,"./CompositionEventPlugin":12,"./DefaultEventPluginOrder":17,"./EnterLeaveEventPlugin":18,"./ExecutionEnvironment":25,"./HTMLDOMPropertyConfig":26,"./MobileSafariClickEventPlugin":29,"./ReactBrowserComponentMixin":33,"./ReactComponentBrowserEnvironment":37,"./ReactDOMButton":42,"./ReactDOMComponent":43,"./ReactDOMForm":44,"./ReactDOMImg":46,"./ReactDOMInput":47,"./ReactDOMOption":48,"./ReactDOMSelect":49,"./ReactDOMTextarea":51,"./ReactDefaultBatchingStrategy":52,"./ReactDefaultPerf":54,"./ReactEventListener":61,"./ReactInjection":62,"./ReactInstanceHandles":64,"./ReactMount":67,"./SVGDOMPropertyConfig":84,"./SelectEventPlugin":85,"./ServerReactRootIndex":86,"./SimpleEventPlugin":87,"./createFullPageComponent":107,"_process":1}],54:[function(require,module,exports){
+},{"./BeforeInputEventPlugin":6,"./ChangeEventPlugin":10,"./ClientReactRootIndex":11,"./CompositionEventPlugin":12,"./DefaultEventPluginOrder":17,"./EnterLeaveEventPlugin":18,"./ExecutionEnvironment":25,"./HTMLDOMPropertyConfig":26,"./MobileSafariClickEventPlugin":29,"./ReactBrowserComponentMixin":33,"./ReactComponentBrowserEnvironment":37,"./ReactDOMButton":42,"./ReactDOMComponent":43,"./ReactDOMForm":44,"./ReactDOMImg":46,"./ReactDOMInput":47,"./ReactDOMOption":48,"./ReactDOMSelect":49,"./ReactDOMTextarea":51,"./ReactDefaultBatchingStrategy":52,"./ReactDefaultPerf":54,"./ReactEventListener":61,"./ReactInjection":62,"./ReactInstanceHandles":64,"./ReactMount":67,"./SVGDOMPropertyConfig":84,"./SelectEventPlugin":85,"./ServerReactRootIndex":86,"./SimpleEventPlugin":87,"./createFullPageComponent":107,"_process":4}],54:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -9837,7 +9870,7 @@ ReactElement.isValidElement = function(object) {
 module.exports = ReactElement;
 
 }).call(this,require('_process'))
-},{"./ReactContext":39,"./ReactCurrentOwner":40,"./warning":149,"_process":1}],57:[function(require,module,exports){
+},{"./ReactContext":39,"./ReactCurrentOwner":40,"./warning":149,"_process":4}],57:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014, Facebook, Inc.
@@ -10119,7 +10152,7 @@ var ReactElementValidator = {
 module.exports = ReactElementValidator;
 
 }).call(this,require('_process'))
-},{"./ReactCurrentOwner":40,"./ReactElement":56,"./ReactPropTypeLocations":75,"./monitorCodeUse":140,"./warning":149,"_process":1}],58:[function(require,module,exports){
+},{"./ReactCurrentOwner":40,"./ReactElement":56,"./ReactPropTypeLocations":75,"./monitorCodeUse":140,"./warning":149,"_process":4}],58:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014, Facebook, Inc.
@@ -10196,7 +10229,7 @@ var ReactEmptyComponent = {
 module.exports = ReactEmptyComponent;
 
 }).call(this,require('_process'))
-},{"./ReactElement":56,"./invariant":130,"_process":1}],59:[function(require,module,exports){
+},{"./ReactElement":56,"./invariant":130,"_process":4}],59:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -10973,7 +11006,7 @@ var ReactInstanceHandles = {
 module.exports = ReactInstanceHandles;
 
 }).call(this,require('_process'))
-},{"./ReactRootIndex":79,"./invariant":130,"_process":1}],65:[function(require,module,exports){
+},{"./ReactRootIndex":79,"./invariant":130,"_process":4}],65:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014, Facebook, Inc.
@@ -11220,7 +11253,7 @@ ReactLegacyElementFactory._isLegacyCallWarningEnabled = true;
 module.exports = ReactLegacyElementFactory;
 
 }).call(this,require('_process'))
-},{"./ReactCurrentOwner":40,"./invariant":130,"./monitorCodeUse":140,"./warning":149,"_process":1}],66:[function(require,module,exports){
+},{"./ReactCurrentOwner":40,"./invariant":130,"./monitorCodeUse":140,"./warning":149,"_process":4}],66:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -11966,7 +11999,7 @@ ReactMount.renderComponent = deprecated(
 module.exports = ReactMount;
 
 }).call(this,require('_process'))
-},{"./DOMProperty":14,"./ReactBrowserEventEmitter":34,"./ReactCurrentOwner":40,"./ReactElement":56,"./ReactInstanceHandles":64,"./ReactLegacyElement":65,"./ReactPerf":72,"./containsNode":105,"./deprecated":110,"./getReactRootElementInContainer":124,"./instantiateReactComponent":129,"./invariant":130,"./shouldUpdateReactComponent":146,"./warning":149,"_process":1}],68:[function(require,module,exports){
+},{"./DOMProperty":14,"./ReactBrowserEventEmitter":34,"./ReactCurrentOwner":40,"./ReactElement":56,"./ReactInstanceHandles":64,"./ReactLegacyElement":65,"./ReactPerf":72,"./containsNode":105,"./deprecated":110,"./getReactRootElementInContainer":124,"./instantiateReactComponent":129,"./invariant":130,"./shouldUpdateReactComponent":146,"./warning":149,"_process":4}],68:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -12500,7 +12533,7 @@ var ReactNativeComponent = {
 module.exports = ReactNativeComponent;
 
 }).call(this,require('_process'))
-},{"./Object.assign":30,"./invariant":130,"_process":1}],71:[function(require,module,exports){
+},{"./Object.assign":30,"./invariant":130,"_process":4}],71:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -12656,7 +12689,7 @@ var ReactOwner = {
 module.exports = ReactOwner;
 
 }).call(this,require('_process'))
-},{"./emptyObject":112,"./invariant":130,"_process":1}],72:[function(require,module,exports){
+},{"./emptyObject":112,"./invariant":130,"_process":4}],72:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -12740,7 +12773,7 @@ function _noMeasure(objName, fnName, func) {
 module.exports = ReactPerf;
 
 }).call(this,require('_process'))
-},{"_process":1}],73:[function(require,module,exports){
+},{"_process":4}],73:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -12907,7 +12940,7 @@ var ReactPropTransferer = {
 module.exports = ReactPropTransferer;
 
 }).call(this,require('_process'))
-},{"./Object.assign":30,"./emptyFunction":111,"./invariant":130,"./joinClasses":135,"./warning":149,"_process":1}],74:[function(require,module,exports){
+},{"./Object.assign":30,"./emptyFunction":111,"./invariant":130,"./joinClasses":135,"./warning":149,"_process":4}],74:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -12935,7 +12968,7 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = ReactPropTypeLocationNames;
 
 }).call(this,require('_process'))
-},{"_process":1}],75:[function(require,module,exports){
+},{"_process":4}],75:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -13656,7 +13689,7 @@ module.exports = {
 };
 
 }).call(this,require('_process'))
-},{"./ReactElement":56,"./ReactInstanceHandles":64,"./ReactMarkupChecksum":66,"./ReactServerRenderingTransaction":81,"./instantiateReactComponent":129,"./invariant":130,"_process":1}],81:[function(require,module,exports){
+},{"./ReactElement":56,"./ReactInstanceHandles":64,"./ReactMarkupChecksum":66,"./ReactServerRenderingTransaction":81,"./instantiateReactComponent":129,"./invariant":130,"_process":4}],81:[function(require,module,exports){
 /**
  * Copyright 2014, Facebook, Inc.
  * All rights reserved.
@@ -14165,7 +14198,7 @@ var ReactUpdates = {
 module.exports = ReactUpdates;
 
 }).call(this,require('_process'))
-},{"./CallbackQueue":9,"./Object.assign":30,"./PooledClass":31,"./ReactCurrentOwner":40,"./ReactPerf":72,"./Transaction":99,"./invariant":130,"./warning":149,"_process":1}],84:[function(require,module,exports){
+},{"./CallbackQueue":9,"./Object.assign":30,"./PooledClass":31,"./ReactCurrentOwner":40,"./ReactPerf":72,"./Transaction":99,"./invariant":130,"./warning":149,"_process":4}],84:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -14911,7 +14944,7 @@ var SimpleEventPlugin = {
 module.exports = SimpleEventPlugin;
 
 }).call(this,require('_process'))
-},{"./EventConstants":19,"./EventPluginUtils":23,"./EventPropagators":24,"./SyntheticClipboardEvent":88,"./SyntheticDragEvent":90,"./SyntheticEvent":91,"./SyntheticFocusEvent":92,"./SyntheticKeyboardEvent":94,"./SyntheticMouseEvent":95,"./SyntheticTouchEvent":96,"./SyntheticUIEvent":97,"./SyntheticWheelEvent":98,"./getEventCharCode":118,"./invariant":130,"./keyOf":137,"./warning":149,"_process":1}],88:[function(require,module,exports){
+},{"./EventConstants":19,"./EventPluginUtils":23,"./EventPropagators":24,"./SyntheticClipboardEvent":88,"./SyntheticDragEvent":90,"./SyntheticEvent":91,"./SyntheticFocusEvent":92,"./SyntheticKeyboardEvent":94,"./SyntheticMouseEvent":95,"./SyntheticTouchEvent":96,"./SyntheticUIEvent":97,"./SyntheticWheelEvent":98,"./getEventCharCode":118,"./invariant":130,"./keyOf":137,"./warning":149,"_process":4}],88:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -15868,7 +15901,7 @@ var Transaction = {
 module.exports = Transaction;
 
 }).call(this,require('_process'))
-},{"./invariant":130,"_process":1}],100:[function(require,module,exports){
+},{"./invariant":130,"_process":4}],100:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -15966,7 +15999,7 @@ function accumulateInto(current, next) {
 module.exports = accumulateInto;
 
 }).call(this,require('_process'))
-},{"./invariant":130,"_process":1}],102:[function(require,module,exports){
+},{"./invariant":130,"_process":4}],102:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -16265,7 +16298,7 @@ function createFullPageComponent(tag) {
 module.exports = createFullPageComponent;
 
 }).call(this,require('_process'))
-},{"./ReactCompositeComponent":38,"./ReactElement":56,"./invariant":130,"_process":1}],108:[function(require,module,exports){
+},{"./ReactCompositeComponent":38,"./ReactElement":56,"./invariant":130,"_process":4}],108:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -16355,7 +16388,7 @@ function createNodesFromMarkup(markup, handleScript) {
 module.exports = createNodesFromMarkup;
 
 }).call(this,require('_process'))
-},{"./ExecutionEnvironment":25,"./createArrayFrom":106,"./getMarkupWrap":122,"./invariant":130,"_process":1}],109:[function(require,module,exports){
+},{"./ExecutionEnvironment":25,"./createArrayFrom":106,"./getMarkupWrap":122,"./invariant":130,"_process":4}],109:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -16464,7 +16497,7 @@ function deprecated(namespace, oldName, newName, ctx, fn) {
 module.exports = deprecated;
 
 }).call(this,require('_process'))
-},{"./Object.assign":30,"./warning":149,"_process":1}],111:[function(require,module,exports){
+},{"./Object.assign":30,"./warning":149,"_process":4}],111:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -16522,7 +16555,7 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = emptyObject;
 
 }).call(this,require('_process'))
-},{"_process":1}],113:[function(require,module,exports){
+},{"_process":4}],113:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -16632,7 +16665,7 @@ function flattenChildren(children) {
 module.exports = flattenChildren;
 
 }).call(this,require('_process'))
-},{"./ReactTextComponent":82,"./traverseAllChildren":148,"./warning":149,"_process":1}],115:[function(require,module,exports){
+},{"./ReactTextComponent":82,"./traverseAllChildren":148,"./warning":149,"_process":4}],115:[function(require,module,exports){
 /**
  * Copyright 2014, Facebook, Inc.
  * All rights reserved.
@@ -17073,7 +17106,7 @@ function getMarkupWrap(nodeName) {
 module.exports = getMarkupWrap;
 
 }).call(this,require('_process'))
-},{"./ExecutionEnvironment":25,"./invariant":130,"_process":1}],123:[function(require,module,exports){
+},{"./ExecutionEnvironment":25,"./invariant":130,"_process":4}],123:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -17448,7 +17481,7 @@ function instantiateReactComponent(element, parentCompositeType) {
 module.exports = instantiateReactComponent;
 
 }).call(this,require('_process'))
-},{"./ReactElement":56,"./ReactEmptyComponent":58,"./ReactLegacyElement":65,"./ReactNativeComponent":70,"./warning":149,"_process":1}],130:[function(require,module,exports){
+},{"./ReactElement":56,"./ReactEmptyComponent":58,"./ReactLegacyElement":65,"./ReactNativeComponent":70,"./warning":149,"_process":4}],130:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -17505,7 +17538,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 module.exports = invariant;
 
 }).call(this,require('_process'))
-},{"_process":1}],131:[function(require,module,exports){
+},{"_process":4}],131:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -17763,7 +17796,7 @@ var keyMirror = function(obj) {
 module.exports = keyMirror;
 
 }).call(this,require('_process'))
-},{"./invariant":130,"_process":1}],137:[function(require,module,exports){
+},{"./invariant":130,"_process":4}],137:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -17920,7 +17953,7 @@ function monitorCodeUse(eventName, data) {
 module.exports = monitorCodeUse;
 
 }).call(this,require('_process'))
-},{"./invariant":130,"_process":1}],141:[function(require,module,exports){
+},{"./invariant":130,"_process":4}],141:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -17960,7 +17993,7 @@ function onlyChild(children) {
 module.exports = onlyChild;
 
 }).call(this,require('_process'))
-},{"./ReactElement":56,"./invariant":130,"_process":1}],142:[function(require,module,exports){
+},{"./ReactElement":56,"./invariant":130,"_process":4}],142:[function(require,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -18248,7 +18281,7 @@ function toArray(obj) {
 module.exports = toArray;
 
 }).call(this,require('_process'))
-},{"./invariant":130,"_process":1}],148:[function(require,module,exports){
+},{"./invariant":130,"_process":4}],148:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2014, Facebook, Inc.
@@ -18431,7 +18464,7 @@ function traverseAllChildren(children, callback, traverseContext) {
 module.exports = traverseAllChildren;
 
 }).call(this,require('_process'))
-},{"./ReactElement":56,"./ReactInstanceHandles":64,"./invariant":130,"_process":1}],149:[function(require,module,exports){
+},{"./ReactElement":56,"./ReactInstanceHandles":64,"./invariant":130,"_process":4}],149:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014, Facebook, Inc.
@@ -18476,7 +18509,7 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = warning;
 
 }).call(this,require('_process'))
-},{"./emptyFunction":111,"_process":1}],150:[function(require,module,exports){
+},{"./emptyFunction":111,"_process":4}],150:[function(require,module,exports){
 module.exports = require('./lib/React');
 
 },{"./lib/React":32}],151:[function(require,module,exports){
@@ -18504,7 +18537,7 @@ function get (k) {
 
 module.exports.set = set;
 module.exports.get = get;
-},{"deep-equal":2}],152:[function(require,module,exports){
+},{"deep-equal":1}],152:[function(require,module,exports){
 "use strict";
 var events = {
     on: function(event, callback, context) {
@@ -18922,7 +18955,16 @@ function colorToHex(color) {
 module.exports.startFirmwareUpdate = function() {
     firmware.startUpdater();
 };
-
+/**
+ * Linkbot.
+ * @class AsyncLinkbot
+ * @param _id {string} The id of the linkbot.
+ * @constructor
+ * @property _wheelRadius {number} The wheel radius.
+ * @property status {string} The status of the linkbot.
+ * @property version {string} The firmware version.
+ * @property id {string} The robot id.
+ */
 module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
     var bot = this;
     var statuses = {0:"offline", 1:"ready", 2:"acquired", 3:"update"};
@@ -18933,7 +18975,10 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
     var driveToValue = null;
     var driveToCalled = false;
     var version = null;
-    
+    /**
+     * Enumeration constants.
+     * @type {{Button, ButtonState, FormFactor, JointState}}
+     */
     bot.enums = enumConstants;
 
     function driveToCallback(error) {
@@ -18965,7 +19010,7 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             window.console.warn('error occurred checking firmware version [' + error.category + '] :: ' + error.message);
         }
     }
-    
+
     bot._wheelPositions = [0, 0, 0];
     // Public
     bot.__defineGetter__("_wheelRadius", function(){
@@ -19003,7 +19048,27 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
     bot.__defineGetter__("_id", function() {
         return id;
     });
-    
+    /**
+     * Color value.
+     * @typedef ColorType
+     * @property {number} red Value between 0 to 255 representing the red color value.
+     * @property {number} green Value between 0 to 255 representing the red color value.
+     * @property {number} blue Value between 0 to 255 representing the red color value.
+     */
+
+    /**
+     * Color Callback.
+     *
+     * @callback robotColorCallback
+     * @param {ColorType} color The color values.
+     */
+
+    /**
+     * Returns the robot LED color in a callback.
+     * @function getColor
+     * @memberOf AsyncLinkbot
+     * @param {robotColorCallback} callback The color callback.
+     */
     bot.getColor = function(callback) {
         asyncBaroboBridge.getLedColor(id, addCallback(function(error, data) {
             if (0 == error.code) {
@@ -19013,6 +19078,18 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             }
         }));
     };
+    /**
+     * Hex Color Callback.
+     * @callback robotHexColorCallback
+     * @param {string} hexColor A hex string representing the LED color value.
+     */
+
+    /**
+     * Returns the robot LED color in a callback.
+     * @function getHexColor
+     * @memberOf AsyncLinkbot
+     * @param {robotHexColorCallback} callback The color callback.
+     */
     bot.getHexColor = function(callback) {
         asyncBaroboBridge.getLedColor(id, addCallback(function(error, data) {
             if (0 == error.code) {
@@ -19023,6 +19100,14 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
         }));
         
     };
+    /**
+     * Sets the robots LED value.
+     * @function color
+     * @memberOf AsyncLinkbot
+     * @param r {number} The red value between 0 and 255.
+     * @param g {number} The green value between 0 and 255.
+     * @param b {number} The blue value between 0 and 255.
+     */
     bot.color = function(r, g, b) {
         if (status != 0 && status != 3) {
             var token = addGenericCallback();
@@ -19030,6 +19115,14 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             bot.event.trigger('changed');
         }
     };
+    /**
+     * Sets the motor angular speed.
+     * @function angularSpeed
+     * @memberOf AsyncLinkbot
+     * @param s1 {number} The angular speed value for motor 1.
+     * @param s2 {number} The angular speed value for motor 2.
+     * @param s3 {number} The angular speed value for motor 3.
+     */
     bot.angularSpeed = function(s1, s2, s3) {
         if (s2 === null) {
             s2 = s1;
@@ -19043,6 +19136,15 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
         }
     };
 
+    /**
+     * Runs the motors the specified number of degrees.  Positive values move
+     * the wheel clockwise.
+     * @function move
+     * @memberOf AsyncLinkbot
+     * @param r1 {number} value to move motor 1 to.
+     * @param r2 {number} value to move motor 2 to.
+     * @param r3 {number} value to move motor 3 to.
+     */
     bot.move = function(r1, r2, r3) {
         if (status != 0 && status != 3) {
             var token = addGenericCallback();
@@ -19050,6 +19152,15 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
         }
     };
 
+    /**
+     * Moves the motors to a particular absolute position. The Linkbot has an
+     * internal sense of zero that it uses for this method.
+     * @function moveTo
+     * @memberOf AsyncLinkbot
+     * @param r1 {number} value to move motor 1 to.
+     * @param r2 {number} value to move motor 2 to.
+     * @param r3 {number} value to move motor 3 to.
+     */
     bot.moveTo = function(r1, r2, r3) {
         if (status != 0 && status != 3) {
             var token = addGenericCallback();
@@ -19057,6 +19168,14 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
         }
     };
 
+    /**
+     * Moves a single motor to a particular absolute position.
+     * @function moveToOneMotor
+     * @see {@link moveTo)
+     * @memberOf AsyncLinkbot
+     * @param joint {number} The motor joint to move (0, 1, or 2).
+     * @param position {number} The position to move the motor to.
+     */
     bot.moveToOneMotor = function(joint, position) {
         if (status != 0 && status != 3) {
             var token = addGenericCallback();
@@ -19072,6 +19191,15 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
         }
     };
 
+    /**
+     * Drives the motors the specified number of degrees.  Positive values move
+     * the wheel clockwise.
+     * @function drive
+     * @memberOf AsyncLinkbot
+     * @param r1 {number} value to drive motor 1 to.
+     * @param r2 {number} value to drive motor 2 to.
+     * @param r3 {number} value to drive motor 3 to.
+     */
     bot.drive = function(r1, r2, r3) {
         if (status != 0 && status != 3) {
             var token = addGenericCallback();
@@ -19079,6 +19207,15 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
         }
     };
 
+    /**
+     * Drives the motors to a particular absolute position. The Linkbot has an
+     * internal sense of zero that it uses for this method.
+     * @function driveTo
+     * @memberOf AsyncLinkbot
+     * @param r1 {number} value to drive motor 1 to.
+     * @param r2 {number} value to drive motor 2 to.
+     * @param r3 {number} value to drive motor 3 to.
+     */
     bot.driveTo = function(r1, r2, r3) {
         if (status != 0 && status != 3) {
             if (driveToCalled) {
@@ -19091,6 +19228,11 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
         }
     };
 
+    /**
+     * Moves an I-Linkbot in the forward direction.
+     * @function moveForward
+     * @memberOf AsyncLinkbot
+     */
     bot.moveForward = function() {
         joinDirection[0] = 1;
         joinDirection[2] = -1;
@@ -19099,6 +19241,12 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             asyncBaroboBridge.moveContinuous(id, token, 7, joinDirection[0], joinDirection[1], joinDirection[2]);
         }
     };
+
+    /**
+     * Moves an I-Linkbot in the backwards direction.
+     * @function moveBackward
+     * @memberOf AsyncLinkbot
+     */
     bot.moveBackward = function() {
         joinDirection[0] = -1;
         joinDirection[2] = 1;
@@ -19107,6 +19255,12 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             asyncBaroboBridge.moveContinuous(id, token, 7, joinDirection[0], joinDirection[1], joinDirection[2]);
         }
     };
+
+    /**
+     * Moves an I-Linkbot to the left.
+     * @function moveBackward
+     * @memberOf AsyncLinkbot
+     */
     bot.moveLeft = function() {
         joinDirection[0] = -1;
         joinDirection[2] = -1;
@@ -19115,6 +19269,12 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             asyncBaroboBridge.moveContinuous(id, token, 7, joinDirection[0], joinDirection[1], joinDirection[2]);
         }
     };
+
+    /**
+     * Moves an I-Linkbot to the right.
+     * @function moveBackward
+     * @memberOf AsyncLinkbot
+     */
     bot.moveRight = function() {
         joinDirection[0] = 1;
         joinDirection[2] = 1;
@@ -19123,6 +19283,15 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             asyncBaroboBridge.moveContinuous(id, token, 7, joinDirection[0], joinDirection[1], joinDirection[2]);
         }
     };
+
+    /**
+     * Moves a Joint continuously in a specific direction.
+     * @function moveJointContinuous
+     * @memberOf AsyncLinkbot
+     * @param joint {number} The robot motor number to move.
+     * @param direction {number} (1,0, or -1) Positive numbers move the robot motor in the positive direction, zero stops and -1 moves the motor in the negative direction.
+     * @return {boolean} True if the input was valid and sent to the robot.
+     */
     bot.moveJointContinuous = function(joint, direction) {
         var token, mask = 0;
         if (joint >= 0 && joint <= 2) {
@@ -19152,6 +19321,12 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
         }
         return false;
     };
+    /**
+     * TODO describe the callback.
+     * @function wheelPositions
+     * @memberOf AsyncLinkbot
+     * @param callback
+     */
     bot.wheelPositions = function(callback) {
         if (status != 0 && status != 3) {
             var token = addCallback(function(error, data) {
@@ -19166,6 +19341,12 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
         }
     };
 
+    /**
+     * TODO describe the joint speed callback
+     * @function getJointSpeeds
+     * @memberOf AsyncLinkbot
+     * @param callback
+     */
     bot.getJointSpeeds = function(callback) {
         if (status != 0 && status != 3) {
             var token = addCallback(function(error, data) {
@@ -19179,6 +19360,11 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
         }
     };
 
+    /**
+     * Stops all motors on the robot.
+     * @function stop
+     * @memberOf AsyncLinkbot
+     */
     bot.stop = function() {
         joinDirection[0] = 0;
         joinDirection[2] = 0;
@@ -19188,6 +19374,12 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
         }
     };
 
+    /**
+     * Sets the buzzer frequency for the robot.  This is how you make it make sounds.
+     * @function buzzerFrequency
+     * @memberOf AsyncLinkbot
+     * @param freq {number} The frequency value.
+     */
     bot.buzzerFrequency = function(freq) {
         if (status != 0 && status != 3) {
             var token = addGenericCallback();
@@ -19195,6 +19387,11 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
         }
     };
 
+    /**
+     * Moves all the Linkbot motors to the zero position.
+     * @function zero
+     * @memberOf AsyncLinkbot
+     */
     bot.zero = function() {
       if (asyncBaroboBridge.resetEncoderRevs) {
           var token = addCallback(function(error) {
@@ -19212,6 +19409,10 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
       }
     };
 
+    /**
+     * Returns the Linkbot form factor.  TODO describe the callback.
+     * @param callback
+     */
     bot.getFormFactor = function(callback) {
         if (status != 0 && status != 3  && callback) {
             var token = addCallback(function(error, data) {
@@ -19225,6 +19426,12 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
         }
     };
 
+    /**
+     * Disconnects from the Linkbot.  It also calls the stop() and unregister methods before disconnecting.
+     * @function disconnect
+     * @memberOf AsyncLinkbot
+     * @return {string} The Linkbot id.
+     */
     bot.disconnect = function() {
         bot.stop();
         bot.unregister();
@@ -19236,6 +19443,12 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
         return id;
     };
 
+    /**
+     * TODO describe the connect callback.
+     * @function connect
+     * @memberOf AsyncLinkbot
+     * @param callback
+     */
     bot.connect = function(callback) {
         var token;
         if (status == 0) {
@@ -19279,7 +19492,13 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             asyncBaroboBridge.getLedColor(id, token);
         }
     };
-    // This is a deprecated method.
+    /**
+     * Registers for Linkbot events.
+     * @function register
+     * @memberOf AsyncLinkbot
+     * @deprecated
+     * @param connections
+     */
     bot.register = function(connections) {
         var obj, token;
         if (status == 0 || status == 3 || typeof(connections) == 'undefined') {
@@ -19340,7 +19559,12 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             asyncBaroboBridge.enableAccelerometerEvents(id, token, true);
         }
     };
-    // This is a deprecated method.
+    /**
+     * Unregisters from Linkbot events.
+     * @function unregister
+     * @memberOf AsyncLinkbot
+     * @deprecated
+     */
     bot.unregister = function() {
         var token;
         if (buttonEventCallbacks.hasOwnProperty(id) && buttonEventCallbacks[id].length > 0) {
@@ -19376,44 +19600,127 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
 var manager = require('./manager.jsx');
 var uimanager = require('./manager-ui.jsx');
 var config = require('./config.jsx');
-
+/**
+ * Linkbots API interface.
+ * @namespace Linkbots
+ */
 window.Linkbots = (function(){
     var mod = {};
     var startOpen = false;
 
+    /**
+     * Adds a Robot to the robot manager.
+     * @function addRobot
+     * @memberOf Linkbots
+     * @param id {string} The robot id to add.
+     */
     mod.addRobot = function(id) {
+
         manager.addRobot(id);
     };
+    /**
+     * @function removeRobot
+     * @memberOf Linkbots
+     * @desc Removes a Robot from the robot manager.
+     * @param id {string} The robot id to remove.
+     */
     mod.removeRobot = function(id) {
         manager.removeRobot(id);
     };
+    /**
+     * Opens the robot manager side menu.
+     * @function openSideMenu
+     * @memberOf Linkbots
+     */
     mod.openSideMenu = function() {
         uimanager.uiEvents.trigger('show-menu');
     };
+    /**
+     * Closes the robot manager side menu.
+     * @function closeSideMenu
+     * @memberOf Linkbots
+     */
     mod.closeSideMenu = function() {
         uimanager.uiEvents.trigger('hide-menu');
     };
+
+    /**
+     * @typedef AquiredLinkbots
+     * @type Object
+     * @property {Array.<AsyncLinkbot>} robots An array of robots.
+     * @property {number} registered The total number of registered robots.
+     * @property {number} ready The total number of robots in the ready state.
+     */
+
+    /**
+     * Acquires available robots from the robot manager and marks them as acquired.
+     * @function acquire
+     * @memberOf Linkbots
+     * @param count {int} The number of robots you wish to acquire.
+     * @return {AquiredLinkbots}
+     */
     mod.acquire = function(count) {
         return manager.acquire(count);
     };
+    /**
+     * Relinquishes the robot back to the robot manager.  It's the opposite of acquire.
+     * @function relinquish
+     * @memberOf Linkbots
+     * @param {AsyncLinkbot} bot The linkbot that you no longer are using and wish to make available.
+     */
     mod.relinquish = function(bot) {
         return manager.relinquish(bot);
     };
+    /**
+     * Scans for linkbots.
+     * @function scan
+     * @memberOf Linkbots
+     */
     mod.scan = function() {
         return baroboBridge.scan();
     };
+    /**
+     * If True is passed in the robot manager menu starts open.
+     * @function startOpen
+     * @memberOf Linkbots
+     * @param value {boolean}.
+     */
     mod.startOpen = function(value) {
         startOpen = value;
     };
+    /**
+     * Sets the title in the top navigation.
+     * @function setNavigationTitle
+     * @memberOf Linkbots
+     * @param title {string} The title to set.
+     */
     mod.setNavigationTitle = function(title) {
         manager.setNavigationTitle(title);
     };
+    /**
+     * Adds a breadcrumb to the top navigation.
+     * @function addNavigationItem
+     * @memberOf Linkbots
+     * @param navItemObject {object} An object containing a url and a title.
+     */
     mod.addNavigationItem = function(navItemObject) {
         manager.addNavigationItem(navItemObject);
     };
+    /**
+     * Sets the breadcrumbs to the array of navigation items.  Replacing the existing breadcrumbs.
+     * @function setNavigationItems
+     * @memberOf Linkbots
+     * @param navItemArray {array} An array of navigation objects.  A navigation object contains a url and title.
+     */
     mod.setNavigationItems = function(navItemArray) {
         manager.setNavigationItems(navItemArray);
     };
+    /**
+     * Adds an array of breadcrumbs to the top navigation.
+     * @function addNavigationItems
+     * @memberOf Linkbots
+     * @param navItemArray {array} An array of navigation objects.  A navigation object contains a url and title.
+     */
     mod.addNavigationItems = function(navItemArray) {
         manager.addNavigationItems(navItemArray);
     };
@@ -19432,7 +19739,14 @@ window.Linkbots = (function(){
         }
         return pathways;
     };
+    /**
+     * TODO: document manager events.
+     */
     mod.managerEvents = manager.event;
+    /**
+     * TODO document ui events.
+     * @type {*|uiEvents|l}
+     */
     mod.uiEvents = uimanager.uiEvents;
 
     if(window.attachEvent) {
@@ -19479,7 +19793,7 @@ var direction = [0, 0, 0];
 var secondMotor = 2;
 var knob1Timer = null;
 var knob2Timer = null;
-var syncKnobsWithMotors = true;
+var syncKnobsWithMotors = false;
 
 /* hasClass, addClass and removeClass from http://www.openjs.com/scripts/dom/class_manipulation.php */
 function hasClass(ele,cls) {
@@ -19715,6 +20029,7 @@ var KnobControl = React.createClass({displayName: "KnobControl",
     getDefaultProps: function() {
         return {
             value: 0,
+            motorValue: 0,
             hasChanged: function() {},
             mouseUp: function() {},
             mouseClicked: function() {}

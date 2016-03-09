@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Blockly LinbotLabs Demo</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css">
+    <link rel="stylesheet" href="http://dev.linkbotlabs.com/linkbotjs/linkbot.css">
+</head>
+<body>
+<div class="container" role="main" style="margin: 25px auto;">
+    <div class="clearfix" style="margin-bottom: 10px;">
+        <div class="pull-right">
+            <button type="button" class="btn btn-default" id="trash-button">
+                <span class="glyphicon glyphicon-trash"></span>
+            </button>
+            <button type="button" class="btn btn-danger" id="play-button">
+                <span class="glyphicon glyphicon-play"></span>
+            </button>
+        </div>
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active">
+                <a href="#blocks" aria-controls="blocks" role="tab" data-toggle="tab">Blocks</a>
+            </li>
+            <li role="presentation">
+                <a href="#javascript" aria-controls="javascript" role="tab" data-toggle="tab">JavaScript</a>
+            </li>
+            <li role="presentation">
+                <a href="#output" aria-controls="output" role="tab" data-toggle="tab">Output</a>
+            </li>
+        </ul>
+    </div>
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="blocks">
+            <div id="blockly" style="height: 480px; margin-bottom: 10px;"></div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="javascript">
+            <pre>
+                <code id="code" class="javascript"></code>
+            </pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="output">
+            <pre>
+                <code id="console" class="console"></code>
+            </pre>
+        </div>
+    </div>
+
+    <xml id="toolbox" style="display: none;">
+        <category name="Variables">
+            <block type="variables_get"></block>
+            <block type="variables_set"></block>
+        </category>
+        <category name="Lists">
+            <block type="lists_create_empty"></block>
+            <block type="lists_create_with"></block>
+            <block type="lists_create_with_container"></block>
+            <block type="lists_create_with_item"></block>
+            <block type="lists_repeat"></block>
+            <block type="lists_length"></block>
+            <block type="lists_isEmpty"></block>
+            <block type="lists_indexOf"></block>
+            <block type="lists_getIndex"></block>
+            <block type="lists_setIndex"></block>
+            <block type="lists_getSublist"></block>
+            <block type="lists_split"></block>
+        </category>
+        <category name="Loops">
+            <block type="controls_repeat_ext"></block>
+            <block type="controls_repeat"></block>
+            <block type="controls_whileUntil"></block>
+            <block type="controls_for"></block>
+            <block type="controls_forEach"></block>
+            <block type="controls_flow_statements"></block>
+        </category>
+        <category name="Logic">
+            <block type="controls_if"></block>
+            <block type="controls_if_if"></block>
+            <block type="controls_if_elseif"></block>
+            <block type="controls_if_else"></block>
+            <block type="logic_compare"></block>
+            <block type="logic_operation"></block>
+            <block type="logic_negate"></block>
+            <block type="logic_boolean"></block>
+            <block type="logic_null"></block>
+            <block type="logic_ternary"></block>
+        </category>
+        <category name="Math">
+            <block type="math_number"></block>
+            <block type="math_arithmetic"></block>
+            <block type="math_single"></block>
+            <block type="math_trig"></block>
+            <block type="math_constant"></block>
+            <block type="math_number_property"></block>
+            <block type="math_change"></block>
+            <block type="math_round"></block>
+            <block type="math_on_list"></block>
+            <block type="math_modulo"></block>
+            <block type="math_constrain"></block>
+            <block type="math_random_int"></block>
+            <block type="math_random_float"></block>
+        </category>
+        <category name="Functions">
+            <block type="procedures_defnoreturn"></block>
+            <block type="procedures_defreturn"></block>
+            <block type="procedures_mutatorcontainer"></block>
+            <block type="procedures_mutatorarg"></block>
+            <block type="procedures_callnoreturn"></block>
+            <block type="procedures_callreturn"></block>
+            <block type="procedures_ifreturn"></block>
+        </category>
+        <category name="Text">
+            <block type="text"></block>
+            <block type="text_print"></block>
+            <block type="text_join"></block>
+            <block type="text_create_join_container"></block>
+            <block type="text_create_join_item"></block>
+            <block type="text_append"></block>
+            <block type="text_length"></block>
+            <block type="text_isEmpty"></block>
+            <block type="text_indexOf"></block>
+            <block type="text_charAt"></block>
+            <block type="text_getSubstring"></block>
+            <block type="text_changeCase"></block>
+            <block type="text_trim"></block>
+            <block type="text_trim"></block>
+            <block type="text_prompt_ext"></block>
+            <block type="text_prompt"></block>
+        </category>
+        <category name="Color">
+            <block type="colour_picker"></block>
+            <block type="colour_random"></block>
+            <block type="colour_rgb"></block>
+            <block type="colour_blend"></block>
+        </category>
+        <category name="Linkbot">
+            <block type="linkbotjs_acquire"></block>
+            <block type="linkbotjs_disconnect"></block>
+            <block type="linkbotjs_settimeout"></block>
+            <!--
+            <block type="linkbotjs_sleep"></block>
+            -->
+            <block type="linkbotjs_color"></block>
+
+            <block type="linkbotjs_buzzer"></block>
+            <block type="linkbotjs_zero"></block>
+            <block type="linkbotjs_stop"></block>
+            <block type="linkbotjs_moveright"></block>
+            <block type="linkbotjs_moveleft"></block>
+            <block type="linkbotjs_movebackward"></block>
+            <block type="linkbotjs_moveforward"></block>
+            <block type="linkbotjs_move_to"></block>
+            <block type="linkbotjs_move"></block>
+            <block type="linkbotjs_angular_speed"></block>
+            <block type="linkbotjs_move_joint"></block>
+        </category>
+    </xml>
+</div>
+</body>
+<script type="text/javascript" src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<script src="js/blockly_compressed.js"></script>
+<script src="js/blocks_compressed.js"></script>
+<script src="js/javascript_compressed.js"></script>
+<script src="js/blockly_linbots.js"></script>
+<script src="js/acorn_interpreter.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js"></script>
+<script src="http://dev.linkbotlabs.com/linkbotjs/linkbot.min.js"></script>
+<script src="msg/js/en.js"></script>
+<script src="js/main.js">
+
+</script>
+<script>hljs.initHighlightingOnLoad();</script>
+</html>
