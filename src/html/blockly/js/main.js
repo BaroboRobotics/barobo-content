@@ -81,6 +81,7 @@ app.initApi = function(interpreter, scope) {
 app.updateCode = function(event) {
     var code = Blockly.JavaScript.workspaceToCode(app.workspace);
     var codeElement = document.getElementById('code');
+    code += '\nLinkbots.relinquishAll();\n';
     codeElement.innerText = code;
     if (hljs) {
         hljs.highlightBlock(codeElement);
@@ -133,6 +134,7 @@ app.init = function() {
         //window.setTimeout(app.nextStep, app.stepDelay);
 
         //app.log(code);
+        code += '\nLinkbots.relinquishAll();\n';
         eval(code);
     });
     $('#trash-button').click(function() {
