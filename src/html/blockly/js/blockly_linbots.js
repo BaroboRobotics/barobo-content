@@ -76,14 +76,14 @@ Blockly.Blocks['linkbotjs_color'] = {
 Blockly.JavaScript['linkbotjs_color'] = function(block) {
     var value_linkbot = Blockly.JavaScript.valueToCode(block, 'Linkbot', Blockly.JavaScript.ORDER_ATOMIC);
     var value_color = Blockly.JavaScript.valueToCode(block, 'Color', Blockly.JavaScript.ORDER_ATOMIC);
-    var color = eval(value_color);
-    var red, green, blue = 0;
-    if (color) {
-        red = parseInt(color.substring(1, 3), 16);
-        green = parseInt(color.substring(3, 5), 16);
-        blue = parseInt(color.substring(5, 7), 16);
-    }
-    code = value_linkbot + '.color(' + red + ', ' + green + ', ' + blue + ');\n';
+    var block = '(function() {\n    var color = ' + value_color + '\n'
+        + '    var red = parseInt(color.substring(1,3), 16);\n'
+        + '    var green = parseInt(color.substring(3,5), 16);\n'
+        + '    var blue = parseInt(color.substring(5,7), 16);\n'
+        + '    ' + value_linkbot + '.color(red, green, blue);\n'
+        + '})();';
+    //code = value_linkbot + '.color(' + red + ', ' + green + ', ' + blue + ');\n';
+    code = block;
     return code;
 };
 
