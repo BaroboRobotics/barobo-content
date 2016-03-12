@@ -81,7 +81,7 @@ Blockly.JavaScript['linkbotjs_color'] = function(block) {
         + '    var green = parseInt(color.substring(3,5), 16);\n'
         + '    var blue = parseInt(color.substring(5,7), 16);\n'
         + '    ' + value_linkbot + '.color(red, green, blue);\n'
-        + '})();';
+        + '})();\n';
     //code = value_linkbot + '.color(' + red + ', ' + green + ', ' + blue + ');\n';
     code = block;
     return code;
