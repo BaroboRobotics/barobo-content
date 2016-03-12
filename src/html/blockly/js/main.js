@@ -9,6 +9,7 @@ app.robots = [];
 app.workspace = null;
 app.blocklyInterpreter = null;
 app.stepDelay = 10;
+app.activeTab = '#blocks';
 
 app.log = function(text) {
     var con = document.getElementById('console');
@@ -80,8 +81,15 @@ app.initApi = function(interpreter, scope) {
 
 app.updateCode = function(event) {
     var code = Blockly.JavaScript.workspaceToCode(app.workspace);
-    var codeElement = document.getElementById('code');
+    var codeElement = document.getElementById('code_javascript');
     code += '\nLinkbots.relinquishAll();\n';
+    codeElement.innerHTML = code;
+    if (hljs) {
+        hljs.highlightBlock(codeElement);
+    }
+    code = Blockly.Xml.workspaceToDom(app.workspace);
+    code = Blockly.Xml.domToPrettyText(code);
+    codeElement = document.getElementById('code_xml');
     codeElement.innerText = code;
     if (hljs) {
         hljs.highlightBlock(codeElement);
@@ -102,40 +110,67 @@ app.init = function() {
             return app.log.apply(this, arguments);
         };
     })(window.alert);
-    app.workspace = Blockly.inject('blockly',
-        {media: 'media/',
-            toolbox: document.getElementById('toolbox')});
-
-    app.workspace.addChangeListener(app.updateCode);
 
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         // e.target -  newly activated tab
         // e.relatedTarget - previous active tab
         if (e.target && e.target.hash && e.target.hash === '#blocks') {
-            $('.blocklyToolboxDiv').show();
+            app.workspace.setVisible(true);
+            Blockly.fireUiEvent(window, 'resize');
         } else {
-            $('.blocklyToolboxDiv').hide();
+            app.workspace.setVisible(false);
         }
+        app.activeTab = e.target.hash;
     });
-    // This fixes some issues with the toolbox displaying correctly.
-    setTimeout(function(){
-        Blockly.fireUiEvent(window, 'resize');
-    }, 500);
-
+    $('#xml-load-apply').click(function() {
+        var element = document.getElementById('xml-load-content');
+        var xml = element.value;
+        if (xml && xml.trim().length > 0) {
+            try {
+                var xmlDom = Blockly.Xml.textToDom(xml);
+                app.workspace.clear();
+                Blockly.Xml.domToWorkspace(app.workspace, xmlDom);
+                if (app.activeTab == '#blocks') {
+                    Blockly.fireUiEvent(window, 'resize');
+                }
+            } catch (e) {
+                app.log('error parsing xml: ' + e);
+            }
+            element.value = '';
+        }
+        $('#xml-load-modal').modal('hide')
+    });
     $('#play-button').click(function() {
         //Blockly.JavaScript.STATEMENT_PREFIX = 'highlightBlock(%1);\n';
         //Blockly.JavaScript.addReservedWords('highlightBlock');
         for (var i = 0; i < app.robots.length; i++) {
             Linkbots.relinquish(app.robots[i]);
         }
-        var code = Blockly.JavaScript.workspaceToCode(app.workspace);
+
         //app.blocklyInterpreter = new Interpreter(code, app.initApi);
         //app.stepDelay = 10;
         //window.setTimeout(app.nextStep, app.stepDelay);
-
         //app.log(code);
+
+        // Check for infinite loops.
+        Blockly.JavaScript.INFINITE_LOOP_TRAP = '  checkTimeout();\n';
+        var timeouts = 0;
+        var checkTimeout = function() {
+            if (timeouts++ > 1000000) {
+                throw 'code timed out.';
+            }
+        };
+
+        var code = Blockly.JavaScript.workspaceToCode(app.workspace);
         code += '\nLinkbots.relinquishAll();\n';
-        eval(code);
+
+        Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+        try {
+            app.log('executing code');
+            eval(code);
+        } catch (e) {
+            app.log('Error occurred executing javascript: ' + e);
+        }
     });
     $('#trash-button').click(function() {
         var count = app.workspace.getAllBlocks().length;
@@ -144,6 +179,28 @@ app.init = function() {
             app.workspace.clear();
         }
     });
+    app.workspace = Blockly.inject('blockly', {
+        grid: { spacing: 25, lenght: 3, colour: '#aaa', snap: true},
+        media: 'media/',
+        toolbox: document.getElementById('toolbox')
+    });
+
+    app.workspace.addChangeListener(app.updateCode);
+
+    var element = document.getElementById('blockly_default');
+    if (element.innerHTML && element.innerHTML.trim().length > 0) {
+        try {
+            var xmlDom = Blockly.Xml.textToDom(element.innerHTML);
+            app.workspace.clear();
+            Blockly.Xml.domToWorkspace(app.workspace, xmlDom);
+            Blockly.fireUiEvent(window, 'resize');
+        } catch (e) {
+            app.log('error parsing xml: ' + e);
+        }
+
+    }
+
+
 };
 
 $(function() {
