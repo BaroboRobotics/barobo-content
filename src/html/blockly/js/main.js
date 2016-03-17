@@ -203,6 +203,119 @@ app.init = function() {
 
 };
 
+// Simulator setup.
+
+var simulator = {
+    config: {
+        wheel: {
+            radius: 1.75, // inches
+            circumference: Math.PI * 1.75 * 2, // diameter * PI
+            speed: [90, 90], // degrees per second.
+            position: [0, 0], // The wheel position in degrees.
+            direction: [0, 0], // -1 negative, 0 stop, 1 forward.
+            moving: [false, false]
+        },
+        robot: {
+            radius: 2.0, // inches
+            circumference: Math.PI * 2.0 * 2,
+            position: [0, 0], // position in inches.
+            rotation: 0
+        }
+    },
+    operations: {
+        state: 'stop',
+        newLocation: [0, 0],
+        calcNewPosition: function(t) {
+            var wheel, robot, center, i, x, y, theta, delta, distance, prevTheta;
+            delta = [0, 0];
+            distance = [0, 0];
+            wheel = simulator.config.wheel;
+            robot = simulator.config.robot;
+            for (i = 0; i < 2; i++) {
+                delta[i] = wheel.speed[i] * t * wheel.direction[i];
+                wheel.position[i] = wheel.position[i] + delta[i];
+            }
+            distance[0] = wheel.circumference * (delta[0] / 360);
+            distance[1] = wheel.circumference * (delta[1] / 360);
+            center = .5 * (distance[0] + distance[1]);
+            prevTheta = (robot.rotation * Math.PI) / 180;
+            x = robot.position[0] + (center * Math.cos(prevTheta));
+            y = robot.position[1] + (center * Math.cos(prevTheta));
+            theta = prevTheta + ((distance[0] - distance[1]) / robot.radius * 2.0);
+            robot.rotation = (theta * 180) / Math.PI;
+            robot.position = [x, y];
+        },
+        moveTo : function(wheel1, wheel2) {
+            simulator.operations.newLocation = [wheel1, wheel2];
+            simulator.operations.state = 'move';
+        }
+    }
+};
+
+simulator.drawRobot = function(ctx, x, y, radius, shadow) {
+    var position = {x:x - radius, y:y - radius, width:radius*2, height: radius*2};
+    ctx.save();
+    ctx.translate(position.x + radius, position.y + radius);
+    ctx.rotate(45*Math.PI/180);
+    ctx.rect(-radius, -radius, position.width, position.height);
+    ctx.restore();
+};
+
+simulator.settings = {
+    series: {
+        points: {
+            show: true,
+            radius: 10
+        }
+    },
+    grid: {
+        markings: [
+            {
+                linewidth: 1,
+                color: "#EEEEEE"
+            }
+        ]
+    },
+    xaxis: {
+        min: -12,
+        max: 12,
+        tickSize: 2,
+        tickDecimals: 0
+    },
+    yaxis: {
+        min: -12,
+        max: 12,
+        tickSize: 2,
+        tickDecimals: 0
+    }
+};
+simulator.data = [{data:[[0,0]], points: {symbol: simulator.drawRobot} }];
+simulator.plot = null;
+simulator.lastRun = null;
+
+simulator.init = function() {
+    simulator.plot = $.plot("#simulator", simulator.data, simulator.settings);
+    simulator.lastRun = new Date();
+    setInterval(function() {
+        var d, t;
+        d = new Date();
+        t = d.getTime() - simulator.lastRun.getTime();
+        simulator.lastRun = d;
+        if (simulator.operations.state == 'move') {
+
+        } else if (simulator.operations.state == 'continuous') {
+
+        }
+
+    }, 100);
+};
+
+
+/**
+ * All init code executed here.
+ */
+
 $(function() {
     app.init();
+    simulator.init();
 });
