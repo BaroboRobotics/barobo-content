@@ -459,7 +459,7 @@ Blockly.Python['linkbotjs_move'] = function(block) {
 Blockly.Blocks['linkbotjs_angular_speed'] = {
     init: function() {
         this.appendDummyInput()
-            .appendField("move (")
+            .appendField("angularSpeed (")
             .appendField(new Blockly.FieldAngle(90), "1")
             .appendField(new Blockly.FieldAngle(90), "2")
             .appendField(new Blockly.FieldAngle(90), "3")
