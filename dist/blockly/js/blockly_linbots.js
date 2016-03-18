@@ -23,6 +23,15 @@ Blockly.JavaScript['linkbotjs_sleep'] = function(block) {
     return code;
 };
 
+Blockly.Python['linkbotjs_sleep'] = function(block) {
+    var value_wait = Blockly.Python.valueToCode(block, 'Sleep', Blockly.JavaScript.ORDER_ATOMIC);
+    if (!value_wait) {
+        return '';
+    }
+    var code = 'sleep(' + value_wait + '); // not a real JavaScript function (see: setTimeout)\n';
+    return code;
+};
+
 Blockly.Blocks['linkbotjs_settimeout'] = {
     init: function() {
         this.appendDummyInput()
@@ -52,6 +61,18 @@ Blockly.JavaScript['linkbotjs_settimeout'] = function(block) {
         value_delay = 1000;
     }
     var code = 'setTimeout(function() {\n' + statements_value + ' }, ' + value_delay + ');\n';
+    return code;
+};
+
+Blockly.Python['linkbotjs_settimeout'] = function(block) {
+    var value_delay = Blockly.Python.valueToCode(block, 'DELAY', Blockly.JavaScript.ORDER_ATOMIC);
+    var statements_value = Blockly.Python.statementToCode(block, 'VALUE');
+    if (!value_delay) {
+        value_delay = 1;
+    }
+    var code = 'time.sleep(' + value_delay + ')\n';
+    // Get rid of the indents
+    code += statements_value.replace(/^[\s]*/m, '');
     return code;
 };
 
@@ -87,6 +108,13 @@ Blockly.JavaScript['linkbotjs_color'] = function(block) {
     return code;
 };
 
+Blockly.Python['linkbotjs_color'] = function(block) {
+    var value_linkbot = Blockly.Python.valueToCode(block, 'LINKBOT', Blockly.Python.ORDER_ATOMIC);
+    var value_color = Blockly.Python.valueToCode(block, 'COLOR', Blockly.Python.ORDER_ATOMIC);
+    code = value_linkbot + '.led.set_color(' + value_color + ')\n';
+    return code;
+};
+
 
 Blockly.Blocks['linkbotjs_acquire'] = {
     init: function() {
@@ -108,6 +136,13 @@ Blockly.JavaScript['linkbotjs_acquire'] = function(block) {
     return [code, Blockly.JavaScript.ORDER_ATOMIC];
 };
 
+Blockly.Python['linkbotjs_acquire'] = function(block) {
+    var value_linkbots = Blockly.Python.valueToCode(block, 'LINKBOTS', Blockly.JavaScript.ORDER_ATOMIC);
+    var code = 'Linkbots.acquire(' + value_linkbots + ').robots';
+    //var code = 'lbjs_acquire(' + value_linkbots + ')';
+    return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
 Blockly.Blocks['linkbotjs_connect'] = {
     init: function() {
         this.appendDummyInput()
@@ -122,6 +157,11 @@ Blockly.Blocks['linkbotjs_connect'] = {
 Blockly.JavaScript['linkbotjs_connect'] = function(block) {
     var code = 'Linkbots.acquire(1).robots[0]';
     return [code, Blockly.JavaScript.ORDER_ATOMIC];
+};
+
+Blockly.Python['linkbotjs_connect'] = function(block) {
+    var code = 'linkbot.Linkbot()';
+    return [code, Blockly.Python.ORDER_ATOMIC];
 };
 
 Blockly.Blocks['linkbotjs_disconnect'] = {
@@ -139,6 +179,12 @@ Blockly.Blocks['linkbotjs_disconnect'] = {
 Blockly.JavaScript['linkbotjs_disconnect'] = function(block) {
     var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
     var code = 'Linkbots.relinquish(' + value_linkbot + ');\n';
+    return code;
+};
+
+Blockly.Python['linkbotjs_disconnect'] = function(block) {
+    var value_linkbot = Blockly.Python.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
+    var code = value_linkbot + '.close()\n';
     return code;
 };
 
@@ -166,6 +212,14 @@ Blockly.JavaScript['linkbotjs_buzzer'] = function(block) {
     return code;
 };
 
+Blockly.Python['linkbotjs_buzzer'] = function(block) {
+    var value_linkbot = Blockly.Python.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_name = Blockly.Python.valueToCode(block, 'FREQ', Blockly.JavaScript.ORDER_ATOMIC);
+    var code = value_linkbot + '.buzzer.set_frequency(' + value_name + ')\n';
+    return code;
+};
+
+
 Blockly.Blocks['linkbotjs_zero'] = {
     init: function() {
         this.appendDummyInput()
@@ -186,6 +240,13 @@ Blockly.JavaScript['linkbotjs_zero'] = function(block) {
     return code;
 };
 
+Blockly.Python['linkbotjs_zero'] = function(block) {
+    var value_linkbot = Blockly.Python.valueToCode(block, 'LINKBOT', Blockly.Python.ORDER_ATOMIC);
+    var code = value_linkbot + '.motors.reset()\n';
+    code += value_linkbot + '.motors.move([ 0, 0, 0 ], relative=False)\n';
+    return code;
+};
+
 Blockly.Blocks['linkbotjs_stop'] = {
     init: function() {
         this.appendDummyInput()
@@ -203,6 +264,12 @@ Blockly.Blocks['linkbotjs_stop'] = {
 Blockly.JavaScript['linkbotjs_stop'] = function(block) {
     var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
     var code = value_linkbot + '.stop();\n';
+    return code;
+};
+
+Blockly.Python['linkbotjs_stop'] = function(block) {
+    var value_linkbot = Blockly.Python.valueToCode(block, 'LINKBOT', Blockly.Python.ORDER_ATOMIC);
+    var code = value_linkbot + 'motors..stop()\n';
     return code;
 };
 
@@ -227,6 +294,13 @@ Blockly.JavaScript['linkbotjs_moveright'] = function(block) {
     return code;
 };
 
+Blockly.Python['linkbotjs_moveright'] = function(block) {
+    var value_linkbot = Blockly.Python.valueToCode(block, 'LINKBOT', Blockly.Python.ORDER_ATOMIC);
+    var code = value_linkbot + '.motors[0].beginMove()\n';
+    code +=    value_linkbot + '.motors[2].beginMove()\n';
+    return code;
+};
+
 Blockly.Blocks['linkbotjs_moveleft'] = {
     init: function() {
         this.appendDummyInput()
@@ -244,6 +318,13 @@ Blockly.Blocks['linkbotjs_moveleft'] = {
 Blockly.JavaScript['linkbotjs_moveleft'] = function(block) {
     var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
     var code = value_linkbot + '.moveLeft();\n';
+    return code;
+};
+
+Blockly.Python['linkbotjs_moveleft'] = function(block) {
+    var value_linkbot = Blockly.Python.valueToCode(block, 'LINKBOT', Blockly.Python.ORDER_ATOMIC);
+    var code = value_linkbot + '.motors[0].beginMove(forward=False)\n';
+    code +=    value_linkbot + '.motors[2].beginMove(forward=False)\n';
     return code;
 };
 
@@ -267,6 +348,13 @@ Blockly.JavaScript['linkbotjs_movebackward'] = function(block) {
     return code;
 };
 
+Blockly.Python['linkbotjs_movebackward'] = function(block) {
+    var value_linkbot = Blockly.Python.valueToCode(block, 'LINKBOT', Blockly.Python.ORDER_ATOMIC);
+    var code = value_linkbot + '.motors[0].beginMove(forward=False)\n';
+    code +=    value_linkbot + '.motors[2].beginMove()\n';
+    return code;
+};
+
 Blockly.Blocks['linkbotjs_moveforward'] = {
     init: function() {
         this.appendDummyInput()
@@ -284,6 +372,13 @@ Blockly.Blocks['linkbotjs_moveforward'] = {
 Blockly.JavaScript['linkbotjs_moveforward'] = function(block) {
     var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
     var code = value_linkbot + '.moveForward();\n';
+    return code;
+};
+
+Blockly.Python['linkbotjs_moveforward'] = function(block) {
+    var value_linkbot = Blockly.Python.valueToCode(block, 'LINKBOT', Blockly.Python.ORDER_ATOMIC);
+    var code = value_linkbot + '.motors[0].beginMove()\n';
+    code +=    value_linkbot + '.motors[2].beginMove(forward=False)\n';
     return code;
 };
 
@@ -315,6 +410,15 @@ Blockly.JavaScript['linkbotjs_move_to'] = function(block) {
     return code;
 };
 
+Blockly.Python['linkbotjs_move_to'] = function(block) {
+    var angle_x = block.getFieldValue('1');
+    var angle_y = block.getFieldValue('2');
+    var angle_z = block.getFieldValue('3');
+    var value_linkbot = Blockly.Python.valueToCode(block, 'LINKBOT', Blockly.Python.ORDER_ATOMIC);
+    var code = value_linkbot + '.motors.move([' + angle_x + ', ' + angle_y + ', ' + angle_z + '], relative=False)\n';
+    return code;
+};
+
 Blockly.Blocks['linkbotjs_move'] = {
     init: function() {
         this.appendDummyInput()
@@ -340,6 +444,15 @@ Blockly.JavaScript['linkbotjs_move'] = function(block) {
     var angle_z = block.getFieldValue('3');
     var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
     var code = value_linkbot + '.move(' + angle_x + ', ' + angle_y + ', ' + angle_z + ');\n';
+    return code;
+};
+
+Blockly.Python['linkbotjs_move'] = function(block) {
+    var angle_x = block.getFieldValue('1');
+    var angle_y = block.getFieldValue('2');
+    var angle_z = block.getFieldValue('3');
+    var value_linkbot = Blockly.Python.valueToCode(block, 'LINKBOT', Blockly.Python.ORDER_ATOMIC);
+    var code = value_linkbot + '.motors.move([' + angle_x + ', ' + angle_y + ', ' + angle_z + '])\n';
     return code;
 };
 
@@ -371,6 +484,17 @@ Blockly.JavaScript['linkbotjs_angular_speed'] = function(block) {
     return code;
 };
 
+Blockly.JavaScript['linkbotjs_angular_speed'] = function(block) {
+    var angle_x = block.getFieldValue('1');
+    var angle_y = block.getFieldValue('2');
+    var angle_z = block.getFieldValue('3');
+    var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
+    var code = value_linkbot + '.motors[0].set_omega(' + angle_x + ')\n';
+    code    += value_linkbot + '.motors[1].set_omega(' + angle_y + ')\n';
+    code    += value_linkbot + '.motors[2].set_omega(' + angle_z + ')\n';
+    return code;
+};
+
 Blockly.Blocks['linkbotjs_move_joint'] = {
     init: function() {
         this.appendDummyInput()
@@ -397,3 +521,14 @@ Blockly.JavaScript['linkbotjs_move_joint'] = function(block) {
     var code = value_linkbot + '.moveToOneMotor(' + dropdown_name + ', ' + value_name + ');\n';
     return code;
 };
+
+/*
+Blockly.Python['linkbotjs_move_joint'] = function(block) {
+    var dropdown_name = block.getFieldValue('NAME');
+    var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_name = Blockly.JavaScript.valueToCode(block, 'NAME', Blockly.JavaScript.ORDER_ATOMIC);
+
+    var code = value_linkbot + '.moveToOneMotor(' + dropdown_name + ', ' + value_name + ');\n';
+    return code;
+};
+*/

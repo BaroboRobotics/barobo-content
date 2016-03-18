@@ -87,6 +87,7 @@ app.updateCode = function(event) {
     if (hljs) {
         hljs.highlightBlock(codeElement);
     }
+
     code = Blockly.Xml.workspaceToDom(app.workspace);
     code = Blockly.Xml.domToPrettyText(code);
     codeElement = document.getElementById('code_xml');
@@ -94,6 +95,11 @@ app.updateCode = function(event) {
     if (hljs) {
         hljs.highlightBlock(codeElement);
     }
+
+    code = 'import linkbot\n';
+    code += Blockly.Python.workspaceToCode(app.workspace);
+    codeElement = document.getElementById('code_python');
+    codeElement.innerHTML = code;
 };
 
 app.nextStep = function() {
