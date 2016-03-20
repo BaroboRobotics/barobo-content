@@ -269,7 +269,7 @@ Blockly.JavaScript['linkbotjs_stop'] = function(block) {
 
 Blockly.Python['linkbotjs_stop'] = function(block) {
     var value_linkbot = Blockly.Python.valueToCode(block, 'LINKBOT', Blockly.Python.ORDER_ATOMIC);
-    var code = value_linkbot + 'motors..stop()\n';
+    var code = value_linkbot + 'motors.stop()\n';
     return code;
 };
 
@@ -385,74 +385,84 @@ Blockly.Python['linkbotjs_moveforward'] = function(block) {
 Blockly.Blocks['linkbotjs_move_to'] = {
     init: function() {
         this.appendDummyInput()
-            .appendField("moveTo (")
-            .appendField(new Blockly.FieldAngle(90), "1")
-            .appendField(new Blockly.FieldAngle(90), "2")
-            .appendField(new Blockly.FieldAngle(90), "3")
-            .appendField(")");
-        this.appendValueInput("LINKBOT")
-            .appendField("linkbot");
+            .appendField(new Blockly.FieldVariable("item"), "LINKBOT")
+            .appendField("moveTo (");
+        this.appendValueInput("1")
+            .setCheck("Number");
+        this.appendValueInput("2")
+            .setCheck("Number")
+            .appendField("\xB0,");
+        this.appendValueInput("3")
+            .setCheck("Number")
+            .appendField("\xB0,");
+        this.appendDummyInput()
+            .appendField("\xB0 )");
+        this.setInputsInline(true);
+        this.setPreviousStatement(true);
+        this.setNextStatement(true);
         this.setColour(65);
         this.setTooltip('');
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
         this.setHelpUrl('http://www.example.com/');
     }
 };
 
-
 Blockly.JavaScript['linkbotjs_move_to'] = function(block) {
-    var angle_x = block.getFieldValue('1');
-    var angle_y = block.getFieldValue('2');
-    var angle_z = block.getFieldValue('3');
-    var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
-    var code = value_linkbot + '.moveTo(' + angle_x + ', ' + angle_y + ', ' + angle_z + ');\n';
+    var variable_linkbot = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('LINKBOT'), Blockly.Variables.NAME_TYPE);
+    var value_1 = Blockly.JavaScript.valueToCode(block, '1', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_2 = Blockly.JavaScript.valueToCode(block, '2', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_3 = Blockly.JavaScript.valueToCode(block, '3', Blockly.JavaScript.ORDER_ATOMIC);
+    var code = variable_linkbot + '.moveTo(' + value_1 + ', ' + value_2 + ', ' + value_3 + ');\n';
     return code;
 };
 
 Blockly.Python['linkbotjs_move_to'] = function(block) {
-    var angle_x = block.getFieldValue('1');
-    var angle_y = block.getFieldValue('2');
-    var angle_z = block.getFieldValue('3');
-    var value_linkbot = Blockly.Python.valueToCode(block, 'LINKBOT', Blockly.Python.ORDER_ATOMIC);
-    var code = value_linkbot + '.motors.move([' + angle_x + ', ' + angle_y + ', ' + angle_z + '], relative=False)\n';
+    var variable_linkbot = Blockly.Python.variableDB_.getName(block.getFieldValue('LINKBOT'), Blockly.Python.NAME_TYPE);
+    var value_1 = Blockly.Python.valueToCode(block, '1', Blockly.Python.ORDER_ATOMIC);
+    var value_2 = Blockly.Python.valueToCode(block, '2', Blockly.Python.ORDER_ATOMIC);
+    var value_3 = Blockly.Python.valueToCode(block, '3', Blockly.Python.ORDER_ATOMIC);
+    var code = variable_linkbot + '.motors.move([' + value_1 + ', ' + value_2 + ', ' + value_3 + '], relative=False)\n';
     return code;
 };
 
 Blockly.Blocks['linkbotjs_move'] = {
     init: function() {
         this.appendDummyInput()
-            .appendField("move (")
-            .appendField(new Blockly.FieldAngle(90), "1")
-            .appendField(new Blockly.FieldAngle(90), "2")
-            .appendField(new Blockly.FieldAngle(90), "3")
-            .appendField(")");
-        this.appendValueInput("LINKBOT")
-            .appendField("linkbot");
+            .appendField(new Blockly.FieldVariable("item"), "LINKBOT")
+            .appendField("move (");
+        this.appendValueInput("1")
+            .setCheck("Number");
+        this.appendValueInput("2")
+            .setCheck("Number")
+            .appendField("\xB0,");
+        this.appendValueInput("3")
+            .setCheck("Number")
+            .appendField("\xB0,");
+        this.appendDummyInput()
+            .appendField("\xB0 )");
+        this.setInputsInline(true);
+        this.setPreviousStatement(true);
+        this.setNextStatement(true);
         this.setColour(65);
         this.setTooltip('');
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
         this.setHelpUrl('http://www.example.com/');
     }
 };
 
-
 Blockly.JavaScript['linkbotjs_move'] = function(block) {
-    var angle_x = block.getFieldValue('1');
-    var angle_y = block.getFieldValue('2');
-    var angle_z = block.getFieldValue('3');
-    var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
-    var code = value_linkbot + '.move(' + angle_x + ', ' + angle_y + ', ' + angle_z + ');\n';
+    var variable_linkbot = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('LINKBOT'), Blockly.Variables.NAME_TYPE);
+    var value_1 = Blockly.JavaScript.valueToCode(block, '1', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_2 = Blockly.JavaScript.valueToCode(block, '2', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_3 = Blockly.JavaScript.valueToCode(block, '3', Blockly.JavaScript.ORDER_ATOMIC);
+    var code = variable_linkbot + '.move(' + value_1 + ', ' + value_2 + ', ' + value_3 + ');\n';
     return code;
 };
 
 Blockly.Python['linkbotjs_move'] = function(block) {
-    var angle_x = block.getFieldValue('1');
-    var angle_y = block.getFieldValue('2');
-    var angle_z = block.getFieldValue('3');
-    var value_linkbot = Blockly.Python.valueToCode(block, 'LINKBOT', Blockly.Python.ORDER_ATOMIC);
-    var code = value_linkbot + '.motors.move([' + angle_x + ', ' + angle_y + ', ' + angle_z + '])\n';
+    var variable_linkbot = Blockly.Python.variableDB_.getName(block.getFieldValue('LINKBOT'), Blockly.Python.NAME_TYPE);
+    var value_1 = Blockly.Python.valueToCode(block, '1', Blockly.Python.ORDER_ATOMIC);
+    var value_2 = Blockly.Python.valueToCode(block, '2', Blockly.Python.ORDER_ATOMIC);
+    var value_3 = Blockly.Python.valueToCode(block, '3', Blockly.Python.ORDER_ATOMIC);
+    var code = variable_linkbot + '.motors.move([' + value_1 + ', ' + value_2 + ', ' + value_3 + '])\n';
     return code;
 };
 
@@ -484,11 +494,11 @@ Blockly.JavaScript['linkbotjs_angular_speed'] = function(block) {
     return code;
 };
 
-Blockly.JavaScript['linkbotjs_angular_speed'] = function(block) {
+Blockly.Python['linkbotjs_angular_speed'] = function(block) {
     var angle_x = block.getFieldValue('1');
     var angle_y = block.getFieldValue('2');
     var angle_z = block.getFieldValue('3');
-    var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_linkbot = Blockly.Python.valueToCode(block, 'LINKBOT', Blockly.Python.ORDER_ATOMIC);
     var code = value_linkbot + '.motors[0].set_omega(' + angle_x + ')\n';
     code    += value_linkbot + '.motors[1].set_omega(' + angle_y + ')\n';
     code    += value_linkbot + '.motors[2].set_omega(' + angle_z + ')\n';
@@ -532,3 +542,51 @@ Blockly.Python['linkbotjs_move_joint'] = function(block) {
     return code;
 };
 */
+
+Blockly.Blocks['simulator_setlocation'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField(new Blockly.FieldVariable("item"), "LINKBOT")
+            .appendField(".setPosition(");
+        this.appendValueInput("X")
+            .appendField("x");
+        this.appendValueInput("Y")
+            .appendField(", y");
+        this.appendDummyInput()
+            .appendField(", ")
+            .appendField(new Blockly.FieldAngle(90), "ROTATION")
+            .appendField(")");
+        this.setInputsInline(true);
+        this.setPreviousStatement(true);
+        this.setNextStatement(true);
+        this.setColour(345);
+        this.setTooltip('');
+        this.setHelpUrl('http://www.example.com/');
+    }
+};
+
+Blockly.JavaScript['simulator_setlocation'] = function(block) {
+    var variable_linkbot = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('LINKBOT'), Blockly.Variables.NAME_TYPE);
+    var value_x = Blockly.JavaScript.valueToCode(block, 'X', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_y = Blockly.JavaScript.valueToCode(block, 'Y', Blockly.JavaScript.ORDER_ATOMIC);
+    var angle_rotation = block.getFieldValue('ROTATION');
+    var code = variable_linkbot + '.setPosition(' + value_x + ', ' + value_y + ', ' + angle_rotation + ');\n';
+    return code;
+};
+
+Blockly.Blocks['simulator_resetlines'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("reset simulator lines");
+        this.setPreviousStatement(true);
+        this.setNextStatement(true);
+        this.setColour(345);
+        this.setTooltip('');
+        this.setHelpUrl('http://www.example.com/');
+    }
+};
+
+Blockly.JavaScript['simulator_resetlines'] = function(block) {
+    var code = 'simulator.resetLines();\n';
+    return code;
+};
