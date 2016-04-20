@@ -82,7 +82,8 @@ app.initApi = function(interpreter, scope) {
 app.updateCode = function(event) {
     var code = Blockly.JavaScript.workspaceToCode(app.workspace);
     var codeElement = document.getElementById('code_javascript');
-    code += '\nLinkbots.relinquishAll();\n';
+    //code += '\nLinkbots.relinquishAll();\n';
+    code += '.catch(function(err) { console.log(err); })\n';
     codeElement.innerHTML = code;
     if (hljs) {
         hljs.highlightBlock(codeElement);

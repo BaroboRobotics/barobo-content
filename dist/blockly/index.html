@@ -44,27 +44,33 @@
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="blocks">
             <div id="blockly_default" class="hidden">
-                <xml xmlns="http://www.w3.org/1999/xhtml">
-                    <block type="variables_set" id="S7L#M^1J7tsDf7Q})LOc" x="236" y="126">
-                        <field name="VAR">robot</field>
-                        <value name="VALUE">
-                            <block type="linkbotjs_connect" id=")vVt812xjZcgfB@{rU,T"></block>
-                        </value>
+               <xml xmlns="http://www.w3.org/1999/xhtml">
+                  <block type="variables_set" id="S7L#M^1J7tsDf7Q})LOc" x="236" y="126">
+                    <field name="VAR">robot</field>
+                    <value name="VALUE">
+                      <block type="linkbotjs_new_linkbot" id="^wRewy43dI`a8*tmkA#["></block>
+                    </value>
+                    <next>
+                      <block type="linkbotjs_connect_id" id="hw_5S.{:H|eT5aZfX~)@">
+                        <field name="ROBOT">robot</field>
+                        <field name="ROBOT_ID">ABCD</field>
                         <next>
-                            <block type="linkbotjs_color" id="F#j5B~pR+o`Zouo4Dp]k">
-                                <value name="LINKBOT">
-                                    <shadow type="variables_get" id="J.g[R`K|,c9MgrPUPz~r">
-                                        <field name="VAR">robot</field>
-                                    </shadow>
-                                </value>
-                                <value name="COLOR">
-                                    <shadow type="colour_picker" id="2!([F_M^.#*Ljnz6kf5V">
-                                        <field name="COLOUR">#ff0000</field>
-                                    </shadow>
-                                </value>
-                            </block>
+                          <block type="linkbotjs_color" id="F#j5B~pR+o`Zouo4Dp]k">
+                            <value name="LINKBOT">
+                              <shadow type="variables_get" id="J.g[R`K|,c9MgrPUPz~r">
+                                <field name="VAR">robot</field>
+                              </shadow>
+                            </value>
+                            <value name="COLOR">
+                              <shadow type="colour_picker" id="2!([F_M^.#*Ljnz6kf5V">
+                                <field name="COLOUR">#ff0000</field>
+                              </shadow>
+                            </value>
+                          </block>
                         </next>
-                    </block>
+                      </block>
+                    </next>
+                  </block>
                 </xml>
             </div>
             <div class="row">
@@ -413,6 +419,8 @@
             </block>
         </category>
         <category name="Linkbot">
+            <block type="linkbotjs_new_linkbot">
+            </block>
             <block type="linkbotjs_acquire">
                 <value name="LINKBOTS">
                     <shadow type="math_number">
@@ -428,6 +436,8 @@
                 <value name="LINKBOT">
                     <shadow type="variables_get"></shadow>
                 </value>
+            </block>
+            <block type="linkbotjs_delay">
             </block>
             <block type="linkbotjs_settimeout">
                 <value name="DELAY">
@@ -604,7 +614,7 @@
 <script src="js/blockly_linkbots.js"></script>
 <script src="js/libs/acorn_interpreter.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js"></script>
-<script src="../linkbotjs/linkbot.min.js"></script>
+<script src="../linkbotjs2/linkbot.js"></script>
 <script src="msg/js/en.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.min.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.symbol.min.js"></script>

@@ -1,3 +1,25 @@
+Blockly.Blocks['linkbotjs_new_linkbot'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("New Unconnected Linkbot");
+    this.setOutput(true, null);
+    this.setColour(65);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+
+Blockly.JavaScript['linkbotjs_new_linkbot'] = function(block) {
+  var code = 'Linkbot()';
+  return [code, Blockly.JavaScript.ORDER_ATOMIC];
+};
+
+
+Blockly.Python['linkbotjs_new_linkbot'] = function(block) {
+  var code = 'None';
+  return [code, Blockly.Python.ORDER_NONE];
+};
+
 Blockly.Blocks['linkbotjs_sleep'] = {
     init: function() {
         this.appendValueInput("Sleep")
@@ -19,7 +41,10 @@ Blockly.JavaScript['linkbotjs_sleep'] = function(block) {
     if (!value_wait) {
         return '';
     }
-    var code = 'sleep(' + value_wait + '); // not a real JavaScript function (see: setTimeout)\n';
+    var code = 'return new Promise( function(resolve, reject) {\n'
+             + '    setTimeout('+value_wait+', resolve());\n'
+             + '    });\n'
+             + '}).then( function() {\n';
     return code;
 };
 
@@ -30,6 +55,37 @@ Blockly.Python['linkbotjs_sleep'] = function(block) {
     }
     var code = 'sleep(' + value_wait + '); // not a real JavaScript function (see: setTimeout)\n';
     return code;
+};
+
+Blockly.Blocks['linkbotjs_delay'] = {
+  init: function() {
+    this.appendValueInput("DELAY_SECONDS")
+        .setCheck("Number")
+        .appendField("Delay (seconds)");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(65);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+
+Blockly.JavaScript['linkbotjs_delay'] = function(block) {
+  var value_delay_seconds = Blockly.JavaScript.valueToCode(block, 'DELAY_SECONDS', Blockly.JavaScript.ORDER_ATOMIC);
+  // TODO: Assemble JavaScript into code variable.
+  var code = '.then( function() {\n'
+           + '  return new Promise( function(resolve, reject) {\n'
+           + '    setTimeout('+value_delay_seconds*1000+', resolve);\n'
+           + '  });\n'
+           + '})\n';
+  return code;
+};
+
+Blockly.Python['linkbotjs_delay'] = function(block) {
+  var value_delay_seconds = Blockly.Python.valueToCode(block, 'DELAY_SECONDS', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = '...\n';
+  return code;
 };
 
 Blockly.Blocks['linkbotjs_settimeout'] = {
@@ -97,12 +153,13 @@ Blockly.Blocks['linkbotjs_color'] = {
 Blockly.JavaScript['linkbotjs_color'] = function(block) {
     var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
     var value_color = Blockly.JavaScript.valueToCode(block, 'COLOR', Blockly.JavaScript.ORDER_ATOMIC);
-    var block = '(function() {\n    var color = ' + value_color + '\n'
+    var block = 
+          '.then( function() {\n'
         + '    var red = parseInt(color.substring(1,3), 16);\n'
         + '    var green = parseInt(color.substring(3,5), 16);\n'
         + '    var blue = parseInt(color.substring(5,7), 16);\n'
-        + '    ' + value_linkbot + '.color(red, green, blue);\n'
-        + '})();\n';
+        + '    return '+value_linkbot+'.color(red, green, blue);\n'
+        + '})\n'
     //code = value_linkbot + '.color(' + red + ', ' + green + ', ' + blue + ');\n';
     code = block;
     return code;
@@ -167,9 +224,14 @@ Blockly.Python['linkbotjs_connect'] = function(block) {
 Blockly.Blocks['linkbotjs_connect_id'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("connect to Linkbot:")
-        .appendField(new Blockly.FieldTextInput("ABCD"), "LINKBOT_ID");
-    this.setOutput(true);
+        .appendField("Connect Linkbot to ID");
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldVariable("item"), "ROBOT");
+    this.appendDummyInput()
+        .appendField("Linkbot ID:")
+        .appendField(new Blockly.FieldTextInput("ABCD"), "ROBOT_ID");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
     this.setColour(65);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
@@ -177,9 +239,12 @@ Blockly.Blocks['linkbotjs_connect_id'] = {
 };
 
 Blockly.JavaScript['linkbotjs_connect_id'] = function(block) {
-    var text_linkbot_id = block.getFieldValue('LINKBOT_ID');
-    var code = 'Linkbots.acquire(1).robots[0]';
-    return [code, Blockly.JavaScript.ORDER_ATOMIC];
+    var variable_robot = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('ROBOT'), Blockly.Variables.NAME_TYPE);
+    var text_robot_id = block.getFieldValue('ROBOT_ID');
+    var code = variable_robot + '.connect("ws://localhost:42000", "'+text_robot_id+'")\n';
+
+    //return [code, Blockly.JavaScript.ORDER_ATOMIC];
+    return code;
 };
 
 Blockly.Python['linkbotjs_connect_id'] = function(block) {

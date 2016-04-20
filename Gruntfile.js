@@ -22,6 +22,7 @@ module.exports = function(grunt) {
                     {expand: true, cwd: 'apps/PoseTeachingApp/html', src: '**/*', dest: 'dist/pose-teaching'},
                     {expand: true, cwd: 'apps/linkbotjs/dist', src: '**/*', dest: 'dist/linkbotjs'},
                     {expand: true, cwd: 'apps/linkbotjs/dist', src: '**/*', dest: 'startup/js/linkbotjs'},
+                    {expand: true, cwd: 'apps/linkbotjs2/dist', src: '**/*', dest: 'dist/linkbotjs2'},
                     {expand: true, cwd: 'apps/jquery/dist', src: '**/*', dest: 'dist/js/vendor/jquery'},
                     {expand: true, cwd: 'src/js', src: '**/*.js', dest: 'dist/js'},
                     {expand: true, cwd: 'src/css', src: '**/*.css', dest: 'dist/css'},
