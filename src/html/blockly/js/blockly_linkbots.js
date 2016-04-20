@@ -164,6 +164,30 @@ Blockly.Python['linkbotjs_connect'] = function(block) {
     return [code, Blockly.Python.ORDER_ATOMIC];
 };
 
+Blockly.Blocks['linkbotjs_connect_id'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("connect to Linkbot:")
+        .appendField(new Blockly.FieldTextInput("ABCD"), "LINKBOT_ID");
+    this.setOutput(true);
+    this.setColour(65);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+
+Blockly.JavaScript['linkbotjs_connect_id'] = function(block) {
+    var text_linkbot_id = block.getFieldValue('LINKBOT_ID');
+    var code = 'Linkbots.acquire(1).robots[0]';
+    return [code, Blockly.JavaScript.ORDER_ATOMIC];
+};
+
+Blockly.Python['linkbotjs_connect_id'] = function(block) {
+    var text_linkbot_id = block.getFieldValue('LINKBOT_ID');
+    var code = 'linkbot.Linkbot("'+text_linkbot_id+'")';
+    return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
 Blockly.Blocks['linkbotjs_disconnect'] = {
     init: function() {
         this.appendValueInput("LINKBOT")
