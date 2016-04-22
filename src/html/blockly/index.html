@@ -413,6 +413,18 @@
             </block>
         </category>
         <category name="Linkbot">
+            <block type="linkbotjs_loop_delay">
+                <value name="TIMES">
+                    <shadow type="math_number">
+                        <field name="NUM">10</field>
+                    </shadow>
+                </value>
+                <value name="DELAY">
+                    <shadow type="math_number">
+                        <field name="NUM">1</field>
+                    </shadow>
+                </value>
+            </block>
             <block type="linkbotjs_acquire">
                 <value name="LINKBOTS">
                     <shadow type="math_number">
@@ -549,6 +561,82 @@
                 <value name="NAME">
                     <shadow type="math_number">
                         <field name="NUM">90</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_button_events">
+                <value name="LINKBOT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="BUTTON">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="STATE">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="TIMESTAMP">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_encoder_events">
+                <value name="LINKBOT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="ENCODER">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="ANGLE">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="TIMESTAMP">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_accelerometer_events">
+                <value name="LINKBOT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="X">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="Y">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="Z">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="TIMESTAMP">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_joint_events">
+                <value name="LINKBOT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="JOINT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="STATE">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="TIMESTAMP">
+                    <shadow type="variables_get">
                     </shadow>
                 </value>
             </block>

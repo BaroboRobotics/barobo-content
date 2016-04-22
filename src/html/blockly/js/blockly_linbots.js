@@ -543,6 +543,377 @@ Blockly.Python['linkbotjs_move_joint'] = function(block) {
 };
 */
 
+Blockly.Blocks['linkbotjs_loop_delay'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("repeat");
+        this.appendValueInput("TIMES")
+            .setCheck(null)
+            .setAlign(Blockly.ALIGN_RIGHT);
+        this.appendDummyInput()
+            .appendField("times, delay");
+        this.appendValueInput("DELAY")
+            .setCheck(null);
+        this.appendDummyInput()
+            .appendField("second(s)");
+        this.appendStatementInput("INPUT")
+            .setCheck(null);
+        this.setInputsInline(true);
+        this.setPreviousStatement(true, null);
+        this.setColour(120);
+        this.setTooltip('');
+        this.setHelpUrl('http://www.example.com/');
+    }
+};
+
+Blockly.JavaScript['linkbotjs_loop_delay'] = function(block) {
+    var value_times = Blockly.JavaScript.valueToCode(block, 'TIMES', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_delay = Blockly.JavaScript.valueToCode(block, 'DELAY', Blockly.JavaScript.ORDER_ATOMIC);
+    var statements_input = Blockly.JavaScript.statementToCode(block, 'INPUT');
+    var code = '(function() {\n'
+        + '    var t = ' + value_times + ';\n'
+        + '    function f() {\n'
+        + '      ' + statements_input + '\n'
+        + '        t--;\n'
+        + '        if (t > 0) setTimeout(f, ' + (value_delay * 1000) + ');\n'
+        + '    }\n'
+        + '    setTimeout(f, ' + (value_delay * 1000) + ');\n'
+        + '})();\n';
+    return code;
+};
+
+Blockly.Blocks['linkbotjs_button_events'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("button event");
+        this.appendValueInput("LINKBOT")
+            .setCheck(null)
+            .appendField("linkbot");
+        this.appendValueInput("BUTTON")
+            .setCheck("Number")
+            .appendField("button #");
+        this.appendValueInput("STATE")
+            .setCheck("Number")
+            .appendField("state");
+        this.appendValueInput("TIMESTAMP")
+            .setCheck("Number")
+            .appendField("timestamp");
+        this.setInputsInline(false);
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(65);
+        this.setTooltip('');
+        this.setHelpUrl('http://www.example.com/');
+    }
+};
+
+Blockly.JavaScript['linkbotjs_button_events'] = function(block) {
+    var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_button = Blockly.JavaScript.valueToCode(block, 'BUTTON', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_state = Blockly.JavaScript.valueToCode(block, 'STATE', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_timestamp = Blockly.JavaScript.valueToCode(block, 'TIMESTAMP', Blockly.JavaScript.ORDER_ATOMIC);
+
+    if (typeof value_linkbot === "undefined" || value_linkbot === null) {
+        return '';
+    }
+    var code = value_linkbot + '.on(\'buttonEvent\', function(n_cb, state_cb, timestamp_cb) {\n';
+    if (typeof value_button !== "undefined" && value_button !== null && value_button !== '') {
+        code += '    ' + value_button + ' = n_cb;\n';
+    }
+    if (typeof value_state !== "undefined" && value_state !== null && value_state !== '') {
+        code += '    ' + value_state + ' = state_cb;\n';
+    }
+    if (typeof value_timestamp !== "undefined" && value_timestamp !== null && value_timestamp !== '') {
+        code += '    ' + value_timestamp + ' = timestamp_cb;\n';
+    }
+    code += '});\n';
+    return code;
+};
+
+Blockly.Python['linkbotjs_button_events'] = function(block) {
+    var value_linkbot = Blockly.Python.valueToCode(block, 'LINKBOT', Blockly.Python.ORDER_ATOMIC);
+    var value_button = Blockly.Python.valueToCode(block, 'BUTTON', Blockly.Python.ORDER_ATOMIC);
+    var value_state = Blockly.Python.valueToCode(block, 'STATE', Blockly.Python.ORDER_ATOMIC);
+    var value_timestamp = Blockly.Python.valueToCode(block, 'TIMESTAMP', Blockly.Python.ORDER_ATOMIC);
+
+    if (typeof value_linkbot === "undefined" || value_linkbot === null) {
+        return '';
+    }
+    var definition = 'def button_event_callback(n_cb,state_cb,timestamp_cb):\n';
+    var body = '';
+    var callbackdef = '    global ';
+    var code = value_linkbot + '.enable_button_events(button_event_callback)\n\n';
+    if (typeof value_button !== "undefined" && value_button !== null && value_button !== '') {
+        body += '    ' + value_button + ' = n_cb\n';
+        callbackdef += value_button + ',';
+    }
+    if (typeof value_state !== "undefined" && value_state !== null && value_state !== '') {
+        body += '    ' + value_state + ' = state_cb\n';
+        callbackdef += value_state + ',';
+    }
+    if (typeof value_timestamp !== "undefined" && value_timestamp !== null && value_timestamp !== '') {
+        body += '    ' + value_timestamp + ' = timestamp_cb\n';
+        callbackdef += value_state + ',';
+    }
+    if (callbackdef === '    global ') {
+        return '';
+    }
+    code = definition + callbackdef.substring(0, callbackdef.length - 1) + '\n' + body + '\n' + code;
+    return code;
+};
+
+Blockly.Blocks['linkbotjs_encoder_events'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("encoder event");
+        this.appendValueInput("LINKBOT")
+            .setCheck(null)
+            .appendField("linkbot");
+        this.appendValueInput("ENCODER")
+            .setCheck("Number")
+            .appendField("button #");
+        this.appendValueInput("ANGLE")
+            .setCheck("Number")
+            .appendField("state");
+        this.appendValueInput("TIMESTAMP")
+            .setCheck("Number")
+            .appendField("timestamp");
+        this.setInputsInline(false);
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(65);
+        this.setTooltip('');
+        this.setHelpUrl('http://www.example.com/');
+    }
+};
+
+Blockly.JavaScript['linkbotjs_encoder_events'] = function(block) {
+    var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_encoder = Blockly.JavaScript.valueToCode(block, 'ENCODER', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_angle = Blockly.JavaScript.valueToCode(block, 'ANGLE', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_timestamp = Blockly.JavaScript.valueToCode(block, 'TIMESTAMP', Blockly.JavaScript.ORDER_ATOMIC);
+
+    if (typeof value_linkbot === "undefined" || value_linkbot === null) {
+        return '';
+    }
+    var code = value_linkbot + '.on(\'encoderEvent\', function(n_cb, angle_cb, timestamp_cb) {\n';
+    if (typeof value_encoder !== "undefined" && value_encoder !== null && value_encoder !== '') {
+        code += '    ' + value_encoder + ' = n_cb;\n';
+    }
+    if (typeof value_angle !== "undefined" && value_angle !== null && value_angle !== '') {
+        code += '    ' + value_angle + ' = angle_cb;\n';
+    }
+    if (typeof value_timestamp !== "undefined" && value_timestamp !== null && value_timestamp !== '') {
+        code += '    ' + value_timestamp + ' = timestamp_cb;\n';
+    }
+    code += '});\n';
+    return code;
+};
+
+Blockly.Python['linkbotjs_encoder_events'] = function(block) {
+    var value_linkbot = Blockly.Python.valueToCode(block, 'LINKBOT', Blockly.Python.ORDER_ATOMIC);
+    var value_encoder = Blockly.Python.valueToCode(block, 'ENCODER', Blockly.Python.ORDER_ATOMIC);
+    var value_angle = Blockly.Python.valueToCode(block, 'ANGLE', Blockly.Python.ORDER_ATOMIC);
+    var value_timestamp = Blockly.Python.valueToCode(block, 'TIMESTAMP', Blockly.Python.ORDER_ATOMIC);
+
+    if (typeof value_linkbot === "undefined" || value_linkbot === null) {
+        return '';
+    }
+    var definition = 'def encoder_event_callback(encoder_cb,angle_cb,timestamp_cb):\n';
+    var body = '';
+    var callbackdef = '    global ';
+    var code = value_linkbot + '.enable_encoder_events(1, encoder_event_callback)\n\n';
+    if (typeof value_encoder !== "undefined" && value_encoder !== null && value_encoder !== '') {
+        body += '    ' + value_encoder + ' = encoder_cb\n';
+        callbackdef += value_encoder + ',';
+    }
+    if (typeof value_angle !== "undefined" && value_angle !== null && value_angle !== '') {
+        body += '    ' + value_angle + ' = angle_cb\n';
+        callbackdef += value_angle + ',';
+    }
+    if (typeof value_timestamp !== "undefined" && value_timestamp !== null && value_timestamp !== '') {
+        body += '    ' + value_timestamp + ' = timestamp_cb\n';
+        callbackdef += value_timestamp + ',';
+    }
+    if (callbackdef === '    global ') {
+        return '';
+    }
+    code = definition + callbackdef.substring(0, callbackdef.length - 1) + '\n' + body + '\n' + code;
+    return code;
+};
+
+Blockly.Blocks['linkbotjs_accelerometer_events'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("accel event");
+        this.appendValueInput("LINKBOT")
+            .setCheck(null)
+            .appendField("linkbot");
+        this.appendValueInput("X")
+            .setCheck("Number")
+            .appendField("x");
+        this.appendValueInput("Y")
+            .setCheck("Number")
+            .appendField("y");
+        this.appendValueInput("Z")
+            .setCheck("Number")
+            .appendField("z");
+        this.appendValueInput("TIMESTAMP")
+            .setCheck("Number")
+            .appendField("timestamp");
+        this.setInputsInline(false);
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(65);
+        this.setTooltip('');
+        this.setHelpUrl('http://www.example.com/');
+    }
+};
+
+Blockly.JavaScript['linkbotjs_accelerometer_events'] = function(block) {
+    var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_x = Blockly.JavaScript.valueToCode(block, 'X', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_y = Blockly.JavaScript.valueToCode(block, 'Y', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_z = Blockly.JavaScript.valueToCode(block, 'Z', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_timestamp = Blockly.JavaScript.valueToCode(block, 'TIMESTAMP', Blockly.JavaScript.ORDER_ATOMIC);
+
+    if (typeof value_linkbot === "undefined" || value_linkbot === null) {
+        return '';
+    }
+    var code = value_linkbot + '.on(\'accelerometerEvent\', function(x_cb, y_cb, z_cb, timestamp_cb) {\n';
+    if (typeof value_x !== "undefined" && value_x !== null && value_x !== '') {
+        code += '    ' + value_x + ' = x_cb;\n';
+    }
+    if (typeof value_y !== "undefined" && value_y !== null && value_y !== '') {
+        code += '    ' + value_y + ' = y_cb;\n';
+    }
+    if (typeof value_z !== "undefined" && value_z !== null && value_z !== '') {
+        code += '    ' + value_z + ' = z_cb;\n';
+    }
+    if (typeof value_timestamp !== "undefined" && value_timestamp !== null && value_timestamp !== '') {
+        code += '    ' + value_timestamp + ' = timestamp_cb;\n';
+    }
+    code += '});\n';
+    return code;
+};
+
+Blockly.Python['linkbotjs_accelerometer_events'] = function(block) {
+    var value_linkbot = Blockly.Python.valueToCode(block, 'LINKBOT', Blockly.Python.ORDER_ATOMIC);
+    var value_x = Blockly.Python.valueToCode(block, 'X', Blockly.Python.ORDER_ATOMIC);
+    var value_y = Blockly.Python.valueToCode(block, 'Y', Blockly.Python.ORDER_ATOMIC);
+    var value_z = Blockly.Python.valueToCode(block, 'Z', Blockly.Python.ORDER_ATOMIC);
+    var value_timestamp = Blockly.Python.valueToCode(block, 'TIMESTAMP', Blockly.Python.ORDER_ATOMIC);
+
+    if (typeof value_linkbot === "undefined" || value_linkbot === null) {
+        return '';
+    }
+    var definition = 'def accelerometer_event_callback(x_cb,y_cb,z_cb,timestamp_cb):\n';
+    var body = '';
+    var callbackdef = '    global ';
+    var code = value_linkbot + '.enable_accelerometer_events(accelerometer_event_callback)\n\n';
+    if (typeof value_x !== "undefined" && value_x !== null && value_x !== '') {
+        body += '    ' + value_x + ' = x_cb\n';
+        callbackdef += value_x + ',';
+    }
+    if (typeof value_y !== "undefined" && value_y !== null && value_y !== '') {
+        body += '    ' + value_y + ' = y_cb\n';
+        callbackdef += value_y + ',';
+    }
+    if (typeof value_z !== "undefined" && value_z !== null && value_z !== '') {
+        body += '    ' + value_z + ' = z_cb\n';
+        callbackdef += value_z + ',';
+    }
+    if (typeof value_timestamp !== "undefined" && value_timestamp !== null && value_timestamp !== '') {
+        body += '    ' + value_timestamp + ' = timestamp_cb\n';
+        callbackdef += value_timestamp + ',';
+    }
+    if (callbackdef === '    global ') {
+        return '';
+    }
+    code = definition + callbackdef.substring(0, callbackdef.length - 1) + '\n' + body + '\n' + code;
+    return code;
+};
+
+Blockly.Blocks['linkbotjs_joint_events'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("joint event");
+        this.appendValueInput("LINKBOT")
+            .setCheck(null)
+            .appendField("linkbot");
+        this.appendValueInput("JOINT")
+            .setCheck("Number")
+            .appendField("joint #");
+        this.appendValueInput("STATE")
+            .setCheck("Number")
+            .appendField("state");
+        this.appendValueInput("TIMESTAMP")
+            .setCheck("Number")
+            .appendField("timestamp");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setInputsInline(false);
+        this.setColour(65);
+        this.setTooltip('');
+        this.setHelpUrl('http://www.example.com/');
+    }
+};
+
+Blockly.JavaScript['linkbotjs_joint_events'] = function(block) {
+    var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_joint = Blockly.JavaScript.valueToCode(block, 'JOINT', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_state = Blockly.JavaScript.valueToCode(block, 'STATE', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_timestamp = Blockly.JavaScript.valueToCode(block, 'TIMESTAMP', Blockly.JavaScript.ORDER_ATOMIC);
+
+    if (typeof value_linkbot === "undefined" || value_linkbot === null) {
+        return '';
+    }
+    var code = value_linkbot + '.on(\'jointEvent\', function(joint_cb, state_cb, timestamp_cb) {\n';
+    if (typeof value_joint !== "undefined" && value_joint !== null && value_joint !== '') {
+        code += '    ' + value_joint + ' = joint_cb;\n';
+    }
+    if (typeof value_state !== "undefined" && value_state !== null && value_state !== '') {
+        code += '    ' + value_state + ' = state_cb;\n';
+    }
+    if (typeof value_timestamp !== "undefined" && value_timestamp !== null && value_timestamp !== '') {
+        code += '    ' + value_timestamp + ' = timestamp_cb;\n';
+    }
+    code += '});\n';
+    return code;
+};
+
+Blockly.Python['linkbotjs_joint_events'] = function(block) {
+    var value_linkbot = Blockly.Python.valueToCode(block, 'LINKBOT', Blockly.Python.ORDER_ATOMIC);
+    var value_joint = Blockly.Python.valueToCode(block, 'JOINT', Blockly.Python.ORDER_ATOMIC);
+    var value_state = Blockly.Python.valueToCode(block, 'STATE', Blockly.Python.ORDER_ATOMIC);
+    var value_timestamp = Blockly.Python.valueToCode(block, 'TIMESTAMP', Blockly.Python.ORDER_ATOMIC);
+
+    if (typeof value_linkbot === "undefined" || value_linkbot === null) {
+        return '';
+    }
+    var definition = 'def joint_event_callback(encoder_cb,angle_cb,timestamp_cb):\n';
+    var body = '';
+    var callbackdef = '    global ';
+    var code = value_linkbot + '.enable_joint_events(joint_event_callback)\n\n';
+    if (typeof value_joint !== "undefined" && value_joint !== null && value_joint !== '') {
+        body += '    ' + value_joint + ' = encoder_cb\n';
+        callbackdef += value_joint + ',';
+    }
+    if (typeof value_state !== "undefined" && value_state !== null && value_state !== '') {
+        body += '    ' + value_state + ' = angle_cb\n';
+        callbackdef += value_state + ',';
+    }
+    if (typeof value_timestamp !== "undefined" && value_timestamp !== null && value_timestamp !== '') {
+        body += '    ' + value_timestamp + ' = timestamp_cb\n';
+        callbackdef += value_state + ',';
+    }
+    if (callbackdef === '    global ') {
+        return '';
+    }
+    code = definition + callbackdef.substring(0, callbackdef.length - 1) + '\n' + body + '\n' + code;
+    return code;
+};
+
 Blockly.Blocks['simulator_setlocation'] = {
     init: function() {
         this.appendDummyInput()
