@@ -75,7 +75,7 @@ Blockly.JavaScript['linkbotjs_delay'] = function(block) {
   // TODO: Assemble JavaScript into code variable.
   var code = '.then( function() {\n'
            + '  return new Promise( function(resolve, reject) {\n'
-           + '    setTimeout('+value_delay_seconds*1000+', resolve);\n'
+           + '    setTimeout(resolve, '+value_delay_seconds*1000+');\n'
            + '  });\n'
            + '})\n';
   return code;

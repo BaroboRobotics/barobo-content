@@ -155,6 +155,7 @@ Blockly.JavaScript['linkbotjs_color'] = function(block) {
     var value_color = Blockly.JavaScript.valueToCode(block, 'COLOR', Blockly.JavaScript.ORDER_ATOMIC);
     var block = 
           '.then( function() {\n'
+        + '    var color = ' + value_color + '\n'
         + '    var red = parseInt(color.substring(1,3), 16);\n'
         + '    var green = parseInt(color.substring(3,5), 16);\n'
         + '    var blue = parseInt(color.substring(5,7), 16);\n'
