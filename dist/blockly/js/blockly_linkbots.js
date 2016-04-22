@@ -10,7 +10,7 @@ Blockly.Blocks['linkbotjs_new_linkbot'] = {
 };
 
 Blockly.JavaScript['linkbotjs_new_linkbot'] = function(block) {
-  var code = 'Linkbot()';
+  var code = 'new Linkbot()';
   return [code, Blockly.JavaScript.ORDER_ATOMIC];
 };
 
