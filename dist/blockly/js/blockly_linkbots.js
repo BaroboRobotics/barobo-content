@@ -642,7 +642,7 @@ Blockly.Python['linkbotjs_button_events'] = function(block) {
     var definition = 'def button_event_callback(n_cb,state_cb,timestamp_cb):\n';
     var body = '';
     var callbackdef = '    global ';
-    var code = value_linkbot + '.enable_button_events(button_event_callback)\n\n';
+    var code = value_linkbot + '.enable_button_events(button_event_callback)\n';
     if (typeof value_button !== "undefined" && value_button !== null && value_button !== '') {
         body += '    ' + value_button + ' = n_cb\n';
         callbackdef += value_button + ',';
@@ -722,7 +722,7 @@ Blockly.Python['linkbotjs_encoder_events'] = function(block) {
     var definition = 'def encoder_event_callback(encoder_cb,angle_cb,timestamp_cb):\n';
     var body = '';
     var callbackdef = '    global ';
-    var code = value_linkbot + '.enable_encoder_events(1, encoder_event_callback)\n\n';
+    var code = value_linkbot + '.enable_encoder_events(1, encoder_event_callback)\n';
     if (typeof value_encoder !== "undefined" && value_encoder !== null && value_encoder !== '') {
         body += '    ' + value_encoder + ' = encoder_cb\n';
         callbackdef += value_encoder + ',';
@@ -810,7 +810,7 @@ Blockly.Python['linkbotjs_accelerometer_events'] = function(block) {
     var definition = 'def accelerometer_event_callback(x_cb,y_cb,z_cb,timestamp_cb):\n';
     var body = '';
     var callbackdef = '    global ';
-    var code = value_linkbot + '.enable_accelerometer_events(accelerometer_event_callback)\n\n';
+    var code = value_linkbot + '.enable_accelerometer_events(accelerometer_event_callback)\n';
     if (typeof value_x !== "undefined" && value_x !== null && value_x !== '') {
         body += '    ' + value_x + ' = x_cb\n';
         callbackdef += value_x + ',';
@@ -894,7 +894,7 @@ Blockly.Python['linkbotjs_joint_events'] = function(block) {
     var definition = 'def joint_event_callback(encoder_cb,angle_cb,timestamp_cb):\n';
     var body = '';
     var callbackdef = '    global ';
-    var code = value_linkbot + '.enable_joint_events(joint_event_callback)\n\n';
+    var code = value_linkbot + '.enable_joint_events(joint_event_callback)\n';
     if (typeof value_joint !== "undefined" && value_joint !== null && value_joint !== '') {
         body += '    ' + value_joint + ' = encoder_cb\n';
         callbackdef += value_joint + ',';
