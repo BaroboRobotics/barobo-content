@@ -97,11 +97,12 @@ Blockly.Blocks['linkbotjs_color'] = {
 Blockly.JavaScript['linkbotjs_color'] = function(block) {
     var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
     var value_color = Blockly.JavaScript.valueToCode(block, 'COLOR', Blockly.JavaScript.ORDER_ATOMIC);
+    var indent = Blockly.JavaScript.INDENT;
     var block = '(function() {\n    var color = ' + value_color + '\n'
-        + '    var red = parseInt(color.substring(1,3), 16);\n'
-        + '    var green = parseInt(color.substring(3,5), 16);\n'
-        + '    var blue = parseInt(color.substring(5,7), 16);\n'
-        + '    ' + value_linkbot + '.color(red, green, blue);\n'
+        + indent + 'var red = parseInt(color.substring(1,3), 16);\n'
+        + indent + 'var green = parseInt(color.substring(3,5), 16);\n'
+        + indent + 'var blue = parseInt(color.substring(5,7), 16);\n'
+        + indent + value_linkbot + '.color(red, green, blue);\n'
         + '})();\n';
     //code = value_linkbot + '.color(' + red + ', ' + green + ', ' + blue + ');\n';
     code = block;
@@ -532,18 +533,17 @@ Blockly.JavaScript['linkbotjs_move_joint'] = function(block) {
     return code;
 };
 
-/*
+
 Blockly.Python['linkbotjs_move_joint'] = function(block) {
     var dropdown_name = block.getFieldValue('NAME');
-    var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
-    var value_name = Blockly.JavaScript.valueToCode(block, 'NAME', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_linkbot = Blockly.Python.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_name = Blockly.Python.valueToCode(block, 'NAME', Blockly.JavaScript.ORDER_ATOMIC);
 
-    var code = value_linkbot + '.moveToOneMotor(' + dropdown_name + ', ' + value_name + ');\n';
-    return code;
+    //var code = value_linkbot + '.moveToOneMotor(' + dropdown_name + ', ' + value_name + ');\n';
+    return '';
 };
-*/
 
-Blockly.Blocks['linkbotjs_loop_delay'] = {
+Blockly.Blocks['linkbotjs_repeat_loop_delay'] = {
     init: function() {
         this.appendDummyInput()
             .appendField("repeat");
@@ -566,19 +566,87 @@ Blockly.Blocks['linkbotjs_loop_delay'] = {
     }
 };
 
-Blockly.JavaScript['linkbotjs_loop_delay'] = function(block) {
+Blockly.JavaScript['linkbotjs_repeat_loop_delay'] = function(block) {
     var value_times = Blockly.JavaScript.valueToCode(block, 'TIMES', Blockly.JavaScript.ORDER_ATOMIC);
     var value_delay = Blockly.JavaScript.valueToCode(block, 'DELAY', Blockly.JavaScript.ORDER_ATOMIC);
     var statements_input = Blockly.JavaScript.statementToCode(block, 'INPUT');
+    var indent = Blockly.JavaScript.INDENT;
     var code = '(function() {\n'
-        + '    var t = ' + value_times + ';\n'
-        + '    function f() {\n'
-        + '      ' + statements_input + '\n'
-        + '        t--;\n'
-        + '        if (t > 0) setTimeout(f, ' + (value_delay * 1000) + ');\n'
-        + '    }\n'
-        + '    setTimeout(f, ' + (value_delay * 1000) + ');\n'
+        + indent + 'var t = ' + value_times + ';\n'
+        + indent + 'function f() {\n'
+        + indent + statements_input + '\n'
+        + indent + indent + 't--;\n'
+        + indent + indent + 'if (t > 0) { setTimeout(f, ' + (value_delay * 1000) + '); }\n'
+        + indent +'}\n'
+        + indent + 'setTimeout(f, ' + (value_delay * 1000) + ');\n'
         + '})();\n';
+    return code;
+};
+
+Blockly.Python['linkbotjs_repeat_loop_delay'] = function(block) {
+    var value_times = Blockly.Python.valueToCode(block, 'TIMES', Blockly.Python.ORDER_ATOMIC);
+    var value_delay = Blockly.Python.valueToCode(block, 'DELAY', Blockly.Python.ORDER_ATOMIC);
+    var statements_input = Blockly.Python.statementToCode(block, 'INPUT');
+    var code = "for count in range (" + value_times + "):\n";
+    code += statements_input;
+    code += Blockly.Python.INDENT + 'time.sleep(' + value_delay + ')\n';
+    return code;
+};
+
+Blockly.Blocks['linkbotjs_while_loop_delay'] = {
+    init: function() {
+        this.appendValueInput("LOOP")
+            .setCheck("Boolean")
+            .appendField("repeat")
+            .appendField(new Blockly.FieldDropdown([["while", "WHILE"], ["until", "UNTIL"]]), "TYPE");
+        this.appendValueInput("DELAY")
+            .setCheck("Number")
+            .appendField("delay (seconds)");
+        this.appendStatementInput("DO")
+            .setCheck(null)
+            .appendField("do");
+        this.setInputsInline(false);
+        this.setPreviousStatement(true, null);
+        this.setColour(120);
+        this.setTooltip('');
+        this.setHelpUrl('http://www.example.com/');
+    }
+};
+
+Blockly.JavaScript['linkbotjs_while_loop_delay'] = function(block) {
+    var dropdown_type = block.getFieldValue('TYPE');
+    var value_loop = Blockly.JavaScript.valueToCode(block, 'LOOP', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_delay = Blockly.JavaScript.valueToCode(block, 'DELAY', Blockly.JavaScript.ORDER_ATOMIC);
+    var statements_do = Blockly.JavaScript.statementToCode(block, 'DO');
+    var indent = Blockly.JavaScript.INDENT;
+    if (typeof value_loop === 'undefined' || value_loop === null || value_loop === '') {
+        value_loop = 'false';
+    }
+    var evalStatement = (dropdown_type === 'WHILE') ? 'if (' + value_loop + ') { ' : 'if (!' + value_loop + ') { ';
+    evalStatement += 'setTimeout(f, ' + (value_delay * 1000) + '); }\n';
+    var code = '(function() {\n'
+        + indent + 'function f() {\n'
+        + indent + statements_do + '\n'
+        + indent + indent + evalStatement
+        + indent +'}\n'
+        + indent + 'setTimeout(f, ' + (value_delay * 1000) + ');\n'
+        + '})();\n';
+    return code;
+};
+
+Blockly.Python['linkbotjs_while_loop_delay'] = function(block) {
+    var dropdown_type = block.getFieldValue('TYPE');
+    var value_loop = Blockly.Python.valueToCode(block, 'LOOP', Blockly.Python.ORDER_ATOMIC);
+    var value_delay = Blockly.Python.valueToCode(block, 'DELAY', Blockly.Python.ORDER_ATOMIC);
+    var statements_do = Blockly.Python.statementToCode(block, 'DO');
+    // TODO: Assemble Python into code variable.
+    if (typeof value_loop === 'undefined' || value_loop === null || value_loop === '') {
+        value_loop = 'False';
+    }
+    var loopType = (dropdown_type === 'WHILE') ? 'while' : 'while not';
+    var code = loopType + ' ' + value_loop +':\n';
+    code += statements_do;
+    code += Blockly.Python.INDENT + 'time.sleep(' + value_delay + ')\n';
     return code;
 };
 
@@ -598,10 +666,13 @@ Blockly.Blocks['linkbotjs_button_events'] = {
         this.appendValueInput("TIMESTAMP")
             .setCheck("Number")
             .appendField("timestamp");
+        this.appendStatementInput("STATEMENTS")
+            .setCheck(null)
+            .appendField("onEvent");
         this.setInputsInline(false);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setColour(65);
+        this.setColour(30);
         this.setTooltip('');
         this.setHelpUrl('http://www.example.com/');
     }
@@ -612,19 +683,23 @@ Blockly.JavaScript['linkbotjs_button_events'] = function(block) {
     var value_button = Blockly.JavaScript.valueToCode(block, 'BUTTON', Blockly.JavaScript.ORDER_ATOMIC);
     var value_state = Blockly.JavaScript.valueToCode(block, 'STATE', Blockly.JavaScript.ORDER_ATOMIC);
     var value_timestamp = Blockly.JavaScript.valueToCode(block, 'TIMESTAMP', Blockly.JavaScript.ORDER_ATOMIC);
-
+    var statements_statements = Blockly.JavaScript.statementToCode(block, 'STATEMENTS');
+    var indent = Blockly.JavaScript.INDENT;
     if (typeof value_linkbot === "undefined" || value_linkbot === null) {
         return '';
     }
     var code = value_linkbot + '.on(\'buttonEvent\', function(n_cb, state_cb, timestamp_cb) {\n';
     if (typeof value_button !== "undefined" && value_button !== null && value_button !== '') {
-        code += '    ' + value_button + ' = n_cb;\n';
+        code += indent + value_button + ' = n_cb;\n';
     }
     if (typeof value_state !== "undefined" && value_state !== null && value_state !== '') {
-        code += '    ' + value_state + ' = state_cb;\n';
+        code += indent + value_state + ' = state_cb;\n';
     }
     if (typeof value_timestamp !== "undefined" && value_timestamp !== null && value_timestamp !== '') {
-        code += '    ' + value_timestamp + ' = timestamp_cb;\n';
+        code += indent + value_timestamp + ' = timestamp_cb;\n';
+    }
+    if (typeof statements_statements !== "undefined" && statements_statements !== null && statements_statements !== '') {
+        code += statements_statements + '\n';
     }
     code += '});\n';
     return code;
@@ -635,28 +710,32 @@ Blockly.Python['linkbotjs_button_events'] = function(block) {
     var value_button = Blockly.Python.valueToCode(block, 'BUTTON', Blockly.Python.ORDER_ATOMIC);
     var value_state = Blockly.Python.valueToCode(block, 'STATE', Blockly.Python.ORDER_ATOMIC);
     var value_timestamp = Blockly.Python.valueToCode(block, 'TIMESTAMP', Blockly.Python.ORDER_ATOMIC);
-
+    var statements_statements = Blockly.Python.statementToCode(block, 'STATEMENTS');
+    var indent = Blockly.Python.INDENT;
     if (typeof value_linkbot === "undefined" || value_linkbot === null) {
         return '';
     }
     var definition = 'def button_event_callback(n_cb,state_cb,timestamp_cb):\n';
     var body = '';
-    var callbackdef = '    global ';
+    var callbackdef = indent + 'global ';
     var code = value_linkbot + '.enable_button_events(button_event_callback)\n';
     if (typeof value_button !== "undefined" && value_button !== null && value_button !== '') {
-        body += '    ' + value_button + ' = n_cb\n';
+        body += indent + value_button + ' = n_cb\n';
         callbackdef += value_button + ',';
     }
     if (typeof value_state !== "undefined" && value_state !== null && value_state !== '') {
-        body += '    ' + value_state + ' = state_cb\n';
+        body += indent + value_state + ' = state_cb\n';
         callbackdef += value_state + ',';
     }
     if (typeof value_timestamp !== "undefined" && value_timestamp !== null && value_timestamp !== '') {
-        body += '    ' + value_timestamp + ' = timestamp_cb\n';
+        body += indent + value_timestamp + ' = timestamp_cb\n';
         callbackdef += value_state + ',';
     }
-    if (callbackdef === '    global ') {
+    if (callbackdef === indent + 'global ') {
         return '';
+    }
+    if (typeof statements_statements !== "undefined" && statements_statements !== null && statements_statements !== '') {
+        body += statements_statements;
     }
     code = definition + callbackdef.substring(0, callbackdef.length - 1) + '\n' + body + '\n' + code;
     return code;
@@ -678,10 +757,13 @@ Blockly.Blocks['linkbotjs_encoder_events'] = {
         this.appendValueInput("TIMESTAMP")
             .setCheck("Number")
             .appendField("timestamp");
+        this.appendStatementInput("STATEMENTS")
+            .setCheck(null)
+            .appendField("onEvent");
         this.setInputsInline(false);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setColour(65);
+        this.setColour(30);
         this.setTooltip('');
         this.setHelpUrl('http://www.example.com/');
     }
@@ -692,19 +774,24 @@ Blockly.JavaScript['linkbotjs_encoder_events'] = function(block) {
     var value_encoder = Blockly.JavaScript.valueToCode(block, 'ENCODER', Blockly.JavaScript.ORDER_ATOMIC);
     var value_angle = Blockly.JavaScript.valueToCode(block, 'ANGLE', Blockly.JavaScript.ORDER_ATOMIC);
     var value_timestamp = Blockly.JavaScript.valueToCode(block, 'TIMESTAMP', Blockly.JavaScript.ORDER_ATOMIC);
+    var statements_statements = Blockly.JavaScript.statementToCode(block, 'STATEMENTS');
+    var indent = Blockly.JavaScript.INDENT;
 
     if (typeof value_linkbot === "undefined" || value_linkbot === null) {
         return '';
     }
     var code = value_linkbot + '.on(\'encoderEvent\', function(n_cb, angle_cb, timestamp_cb) {\n';
     if (typeof value_encoder !== "undefined" && value_encoder !== null && value_encoder !== '') {
-        code += '    ' + value_encoder + ' = n_cb;\n';
+        code += indent + value_encoder + ' = n_cb;\n';
     }
     if (typeof value_angle !== "undefined" && value_angle !== null && value_angle !== '') {
-        code += '    ' + value_angle + ' = angle_cb;\n';
+        code += indent + value_angle + ' = angle_cb;\n';
     }
     if (typeof value_timestamp !== "undefined" && value_timestamp !== null && value_timestamp !== '') {
-        code += '    ' + value_timestamp + ' = timestamp_cb;\n';
+        code += indent + value_timestamp + ' = timestamp_cb;\n';
+    }
+    if (typeof statements_statements !== "undefined" && statements_statements !== null && statements_statements !== '') {
+        code += statements_statements + '\n';
     }
     code += '});\n';
     return code;
@@ -715,28 +802,32 @@ Blockly.Python['linkbotjs_encoder_events'] = function(block) {
     var value_encoder = Blockly.Python.valueToCode(block, 'ENCODER', Blockly.Python.ORDER_ATOMIC);
     var value_angle = Blockly.Python.valueToCode(block, 'ANGLE', Blockly.Python.ORDER_ATOMIC);
     var value_timestamp = Blockly.Python.valueToCode(block, 'TIMESTAMP', Blockly.Python.ORDER_ATOMIC);
-
+    var statements_statements = Blockly.Python.statementToCode(block, 'STATEMENTS');
+    var indent = Blockly.Python.INDENT;
     if (typeof value_linkbot === "undefined" || value_linkbot === null) {
         return '';
     }
     var definition = 'def encoder_event_callback(encoder_cb,angle_cb,timestamp_cb):\n';
     var body = '';
-    var callbackdef = '    global ';
+    var callbackdef = indent + 'global ';
     var code = value_linkbot + '.enable_encoder_events(1, encoder_event_callback)\n';
     if (typeof value_encoder !== "undefined" && value_encoder !== null && value_encoder !== '') {
-        body += '    ' + value_encoder + ' = encoder_cb\n';
+        body += indent + value_encoder + ' = encoder_cb\n';
         callbackdef += value_encoder + ',';
     }
     if (typeof value_angle !== "undefined" && value_angle !== null && value_angle !== '') {
-        body += '    ' + value_angle + ' = angle_cb\n';
+        body += indent + value_angle + ' = angle_cb\n';
         callbackdef += value_angle + ',';
     }
     if (typeof value_timestamp !== "undefined" && value_timestamp !== null && value_timestamp !== '') {
-        body += '    ' + value_timestamp + ' = timestamp_cb\n';
+        body += indent + value_timestamp + ' = timestamp_cb\n';
         callbackdef += value_timestamp + ',';
     }
-    if (callbackdef === '    global ') {
+    if (callbackdef === indent + 'global ') {
         return '';
+    }
+    if (typeof statements_statements !== "undefined" && statements_statements !== null && statements_statements !== '') {
+        body += statements_statements;
     }
     code = definition + callbackdef.substring(0, callbackdef.length - 1) + '\n' + body + '\n' + code;
     return code;
@@ -761,10 +852,13 @@ Blockly.Blocks['linkbotjs_accelerometer_events'] = {
         this.appendValueInput("TIMESTAMP")
             .setCheck("Number")
             .appendField("timestamp");
+        this.appendStatementInput("STATEMENTS")
+            .setCheck(null)
+            .appendField("onEvent");
         this.setInputsInline(false);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setColour(65);
+        this.setColour(30);
         this.setTooltip('');
         this.setHelpUrl('http://www.example.com/');
     }
@@ -776,22 +870,26 @@ Blockly.JavaScript['linkbotjs_accelerometer_events'] = function(block) {
     var value_y = Blockly.JavaScript.valueToCode(block, 'Y', Blockly.JavaScript.ORDER_ATOMIC);
     var value_z = Blockly.JavaScript.valueToCode(block, 'Z', Blockly.JavaScript.ORDER_ATOMIC);
     var value_timestamp = Blockly.JavaScript.valueToCode(block, 'TIMESTAMP', Blockly.JavaScript.ORDER_ATOMIC);
-
+    var statements_statements = Blockly.JavaScript.statementToCode(block, 'STATEMENTS');
+    var indent = Blockly.JavaScript.INDENT;
     if (typeof value_linkbot === "undefined" || value_linkbot === null) {
         return '';
     }
     var code = value_linkbot + '.on(\'accelerometerEvent\', function(x_cb, y_cb, z_cb, timestamp_cb) {\n';
     if (typeof value_x !== "undefined" && value_x !== null && value_x !== '') {
-        code += '    ' + value_x + ' = x_cb;\n';
+        code += indent + value_x + ' = x_cb;\n';
     }
     if (typeof value_y !== "undefined" && value_y !== null && value_y !== '') {
-        code += '    ' + value_y + ' = y_cb;\n';
+        code += indent + value_y + ' = y_cb;\n';
     }
     if (typeof value_z !== "undefined" && value_z !== null && value_z !== '') {
-        code += '    ' + value_z + ' = z_cb;\n';
+        code += indent + value_z + ' = z_cb;\n';
     }
     if (typeof value_timestamp !== "undefined" && value_timestamp !== null && value_timestamp !== '') {
-        code += '    ' + value_timestamp + ' = timestamp_cb;\n';
+        code += indent + value_timestamp + ' = timestamp_cb;\n';
+    }
+    if (typeof statements_statements !== "undefined" && statements_statements !== null && statements_statements !== '') {
+        code += statements_statements + '\n';
     }
     code += '});\n';
     return code;
@@ -803,32 +901,36 @@ Blockly.Python['linkbotjs_accelerometer_events'] = function(block) {
     var value_y = Blockly.Python.valueToCode(block, 'Y', Blockly.Python.ORDER_ATOMIC);
     var value_z = Blockly.Python.valueToCode(block, 'Z', Blockly.Python.ORDER_ATOMIC);
     var value_timestamp = Blockly.Python.valueToCode(block, 'TIMESTAMP', Blockly.Python.ORDER_ATOMIC);
-
+    var statements_statements = Blockly.Python.statementToCode(block, 'STATEMENTS');
+    var indent = Blockly.Python.INDENT;
     if (typeof value_linkbot === "undefined" || value_linkbot === null) {
         return '';
     }
     var definition = 'def accelerometer_event_callback(x_cb,y_cb,z_cb,timestamp_cb):\n';
     var body = '';
-    var callbackdef = '    global ';
+    var callbackdef = indent + 'global ';
     var code = value_linkbot + '.enable_accelerometer_events(accelerometer_event_callback)\n';
     if (typeof value_x !== "undefined" && value_x !== null && value_x !== '') {
-        body += '    ' + value_x + ' = x_cb\n';
+        body += indent + value_x + ' = x_cb\n';
         callbackdef += value_x + ',';
     }
     if (typeof value_y !== "undefined" && value_y !== null && value_y !== '') {
-        body += '    ' + value_y + ' = y_cb\n';
+        body += indent + value_y + ' = y_cb\n';
         callbackdef += value_y + ',';
     }
     if (typeof value_z !== "undefined" && value_z !== null && value_z !== '') {
-        body += '    ' + value_z + ' = z_cb\n';
+        body += indent + value_z + ' = z_cb\n';
         callbackdef += value_z + ',';
     }
     if (typeof value_timestamp !== "undefined" && value_timestamp !== null && value_timestamp !== '') {
-        body += '    ' + value_timestamp + ' = timestamp_cb\n';
+        body += indent + value_timestamp + ' = timestamp_cb\n';
         callbackdef += value_timestamp + ',';
     }
-    if (callbackdef === '    global ') {
+    if (callbackdef === indent + 'global ') {
         return '';
+    }
+    if (typeof statements_statements !== "undefined" && statements_statements !== null && statements_statements !== '') {
+        body += statements_statements;
     }
     code = definition + callbackdef.substring(0, callbackdef.length - 1) + '\n' + body + '\n' + code;
     return code;
@@ -850,10 +952,13 @@ Blockly.Blocks['linkbotjs_joint_events'] = {
         this.appendValueInput("TIMESTAMP")
             .setCheck("Number")
             .appendField("timestamp");
+        this.appendStatementInput("STATEMENTS")
+            .setCheck(null)
+            .appendField("onEvent");
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
         this.setInputsInline(false);
-        this.setColour(65);
+        this.setColour(30);
         this.setTooltip('');
         this.setHelpUrl('http://www.example.com/');
     }
@@ -864,19 +969,23 @@ Blockly.JavaScript['linkbotjs_joint_events'] = function(block) {
     var value_joint = Blockly.JavaScript.valueToCode(block, 'JOINT', Blockly.JavaScript.ORDER_ATOMIC);
     var value_state = Blockly.JavaScript.valueToCode(block, 'STATE', Blockly.JavaScript.ORDER_ATOMIC);
     var value_timestamp = Blockly.JavaScript.valueToCode(block, 'TIMESTAMP', Blockly.JavaScript.ORDER_ATOMIC);
-
+    var statements_statements = Blockly.JavaScript.statementToCode(block, 'STATEMENTS');
+    var indent = Blockly.JavaScript.INDENT;
     if (typeof value_linkbot === "undefined" || value_linkbot === null) {
         return '';
     }
     var code = value_linkbot + '.on(\'jointEvent\', function(joint_cb, state_cb, timestamp_cb) {\n';
     if (typeof value_joint !== "undefined" && value_joint !== null && value_joint !== '') {
-        code += '    ' + value_joint + ' = joint_cb;\n';
+        code += indent + value_joint + ' = joint_cb;\n';
     }
     if (typeof value_state !== "undefined" && value_state !== null && value_state !== '') {
-        code += '    ' + value_state + ' = state_cb;\n';
+        code += indent + value_state + ' = state_cb;\n';
     }
     if (typeof value_timestamp !== "undefined" && value_timestamp !== null && value_timestamp !== '') {
-        code += '    ' + value_timestamp + ' = timestamp_cb;\n';
+        code += indent + value_timestamp + ' = timestamp_cb;\n';
+    }
+    if (typeof statements_statements !== "undefined" && statements_statements !== null && statements_statements !== '') {
+        code += statements_statements + '\n';
     }
     code += '});\n';
     return code;
@@ -887,28 +996,32 @@ Blockly.Python['linkbotjs_joint_events'] = function(block) {
     var value_joint = Blockly.Python.valueToCode(block, 'JOINT', Blockly.Python.ORDER_ATOMIC);
     var value_state = Blockly.Python.valueToCode(block, 'STATE', Blockly.Python.ORDER_ATOMIC);
     var value_timestamp = Blockly.Python.valueToCode(block, 'TIMESTAMP', Blockly.Python.ORDER_ATOMIC);
-
+    var statements_statements = Blockly.Python.statementToCode(block, 'STATEMENTS');
+    var indent = Blockly.Python.INDENT;
     if (typeof value_linkbot === "undefined" || value_linkbot === null) {
         return '';
     }
     var definition = 'def joint_event_callback(encoder_cb,angle_cb,timestamp_cb):\n';
     var body = '';
-    var callbackdef = '    global ';
+    var callbackdef = indent + 'global ';
     var code = value_linkbot + '.enable_joint_events(joint_event_callback)\n';
     if (typeof value_joint !== "undefined" && value_joint !== null && value_joint !== '') {
-        body += '    ' + value_joint + ' = encoder_cb\n';
+        body += indent + value_joint + ' = encoder_cb\n';
         callbackdef += value_joint + ',';
     }
     if (typeof value_state !== "undefined" && value_state !== null && value_state !== '') {
-        body += '    ' + value_state + ' = angle_cb\n';
+        body += indent + value_state + ' = angle_cb\n';
         callbackdef += value_state + ',';
     }
     if (typeof value_timestamp !== "undefined" && value_timestamp !== null && value_timestamp !== '') {
-        body += '    ' + value_timestamp + ' = timestamp_cb\n';
+        body += indent + value_timestamp + ' = timestamp_cb\n';
         callbackdef += value_state + ',';
     }
-    if (callbackdef === '    global ') {
+    if (callbackdef === indent + 'global ') {
         return '';
+    }
+    if (typeof statements_statements !== "undefined" && statements_statements !== null && statements_statements !== '') {
+        body += statements_statements;
     }
     code = definition + callbackdef.substring(0, callbackdef.length - 1) + '\n' + body + '\n' + code;
     return code;

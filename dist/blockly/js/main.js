@@ -82,7 +82,6 @@ app.initApi = function(interpreter, scope) {
 app.updateCode = function(event) {
     var code = Blockly.JavaScript.workspaceToCode(app.workspace);
     var codeElement = document.getElementById('code_javascript');
-    code += '\nLinkbots.relinquishAll();\n';
     codeElement.innerHTML = code;
     if (hljs) {
         hljs.highlightBlock(codeElement);
@@ -96,7 +95,7 @@ app.updateCode = function(event) {
         hljs.highlightBlock(codeElement);
     }
 
-    code = 'import linkbot\n';
+    code = 'import linkbot\nimport time\n';
     code += Blockly.Python.workspaceToCode(app.workspace);
     codeElement = document.getElementById('code_python');
     codeElement.innerHTML = code;
@@ -161,13 +160,13 @@ app.init = function() {
         Blockly.JavaScript.INFINITE_LOOP_TRAP = '  checkTimeout();\n';
         var timeouts = 0;
         var checkTimeout = function() {
-            if (timeouts++ > 1000000) {
+            if (timeouts++ > 10000000) {
                 throw 'code timed out.';
             }
         };
 
         var code = Blockly.JavaScript.workspaceToCode(app.workspace);
-        code += '\nLinkbots.relinquishAll();\n';
+        code = 'Linkbots.relinquishAll();\n' + code;
 
         Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
         try {
