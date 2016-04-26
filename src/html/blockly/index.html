@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Blockly LinbotLabs Demo</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css">
+    <link rel="stylesheet" href="http://dev.linkbotlabs.com/linkbotjs/linkbot.css">
+</head>
+<body style="margin-top: 90px;">
+<div class="container" role="main" style="margin: 25px auto;">
+    <div class="clearfix" style="margin-bottom: 10px;">
+        <div class="pull-right">
+            <button type="button" class="btn btn-default" data-target="#xml-load-modal" data-toggle="modal">
+                <span class="glyphicon glyphicon-new-window"></span>
+            </button>
+            <button type="button" class="btn btn-default" id="trash-button">
+                <span class="glyphicon glyphicon-trash"></span>
+            </button>
+            <button type="button" class="btn btn-danger" id="play-button">
+                <span class="glyphicon glyphicon-play"></span>
+            </button>
+        </div>
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active">
+                <a href="#blocks" aria-controls="blocks" role="tab" data-toggle="tab">Blocks</a>
+            </li>
+            <li role="presentation">
+                <a href="#javascript" aria-controls="javascript" role="tab" data-toggle="tab">JavaScript</a>
+            </li>
+            <li role="presentation">
+                <a href="#python" aria-controls="python" role="tab" data-toggle="tab">Python</a>
+            </li>
+            <li role="presentation">
+                <a href="#xml" aria-controls="xml" role="tab" data-toggle="tab">XML</a>
+            </li>
+            <li role="presentation">
+                <a href="#output" aria-controls="output" role="tab" data-toggle="tab">Output</a>
+            </li>
+        </ul>
+    </div>
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="blocks">
+            <div id="blockly_default" class="hidden">
+                <xml xmlns="http://www.w3.org/1999/xhtml">
+                    <block type="variables_set" id="S7L#M^1J7tsDf7Q})LOc" x="236" y="126">
+                        <field name="VAR">robot</field>
+                        <value name="VALUE">
+                            <block type="linkbotjs_connect" id=")vVt812xjZcgfB@{rU,T"></block>
+                        </value>
+                        <next>
+                            <block type="linkbotjs_color" id="F#j5B~pR+o`Zouo4Dp]k">
+                                <value name="LINKBOT">
+                                    <shadow type="variables_get" id="J.g[R`K|,c9MgrPUPz~r">
+                                        <field name="VAR">robot</field>
+                                    </shadow>
+                                </value>
+                                <value name="COLOR">
+                                    <shadow type="colour_picker" id="2!([F_M^.#*Ljnz6kf5V">
+                                        <field name="COLOUR">#ff0000</field>
+                                    </shadow>
+                                </value>
+                            </block>
+                        </next>
+                    </block>
+                </xml>
+            </div>
+            <div class="row">
+                <div id="simulator" style="height: 480px; margin-bottom: 10px;" class="col-sm-5"></div>
+                <div id="blockly" style="height: 480px; margin-bottom: 10px;" class="col-sm-7"></div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="javascript">
+            <pre>
+                <code id="code_javascript" class="javascript"></code>
+            </pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="python">
+            <pre>
+                <code id="code_python" class="python"></code>
+            </pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="xml">
+            <pre>
+                <code id="code_xml" class="xml"></code>
+            </pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="output">
+            <pre>
+                <code id="console" class="console"></code>
+            </pre>
+            <div class="hidden">
+                <img src="../img/simulator_robot.png">
+            </div>
+        </div>
+    </div>
+
+    <xml id="toolbox" style="display: none;">
+        <category name="Variables">
+            <block type="variables_get"></block>
+            <block type="variables_set"></block>
+        </category>
+        <category name="Lists">
+            <block type="lists_create_empty"></block>
+            <block type="lists_create_with">
+                <mutation items="0"></mutation>
+            </block>
+            <block type="lists_create_with_container"></block>
+            <block type="lists_create_with_item"></block>
+            <block type="lists_repeat">
+                <value name="NUM">
+                    <shadow type="math_number">
+                        <field name="NUM">5</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="lists_length"></block>
+            <block type="lists_isEmpty"></block>
+            <block type="lists_indexOf">
+                <value name="VALUE">
+                    <block type="variables_get">
+                        <field name="VAR">list</field>
+                    </block>
+                </value>
+            </block>
+            <block type="lists_getIndex">
+                <value name="VALUE">
+                    <block type="variables_get">
+                        <field name="VAR">list</field>
+                    </block>
+                </value>
+            </block>
+            <block type="lists_setIndex">
+                <value name="LIST">
+                    <block type="variables_get">
+                        <field name="VAR">list</field>
+                    </block>
+                </value>
+            </block>
+            <block type="lists_getSublist">
+                <value name="LIST">
+                    <block type="variables_get">
+                        <field name="VAR">list</field>
+                    </block>
+                </value>
+            </block>
+            <block type="lists_split">
+                <value name="DELIM">
+                    <shadow type="text">
+                        <field name="TEXT">,</field>
+                    </shadow>
+                </value>
+            </block>
+        </category>
+        <category name="Loops">
+            <block type="controls_repeat_ext">
+                <value name="TIMES">
+                    <shadow type="math_number">
+                        <field name="NUM">10</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="controls_repeat"></block>
+            <block type="controls_whileUntil"></block>
+            <block type="controls_for">
+                <value name="FROM">
+                    <shadow type="math_number">
+                        <field name="NUM">1</field>
+                    </shadow>
+                </value>
+                <value name="TO">
+                    <shadow type="math_number">
+                        <field name="NUM">10</field>
+                    </shadow>
+                </value>
+                <value name="BY">
+                    <shadow type="math_number">
+                        <field name="NUM">1</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="controls_forEach"></block>
+            <block type="controls_flow_statements"></block>
+        </category>
+        <category name="Logic">
+            <block type="controls_if"></block>
+            <block type="controls_if_if"></block>
+            <block type="controls_if_elseif"></block>
+            <block type="controls_if_else"></block>
+            <block type="logic_compare"></block>
+            <block type="logic_operation"></block>
+            <block type="logic_negate"></block>
+            <block type="logic_boolean"></block>
+            <block type="logic_null"></block>
+            <block type="logic_ternary"></block>
+        </category>
+        <category name="Math">
+            <block type="math_number"></block>
+            <block type="math_arithmetic">
+                <value name="A">
+                    <shadow type="math_number">
+                        <field name="NUM">1</field>
+                    </shadow>
+                </value>
+                <value name="B">
+                    <shadow type="math_number">
+                        <field name="NUM">1</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="math_single">
+                <value name="NUM">
+                    <shadow type="math_number">
+                        <field name="NUM">9</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="math_trig">
+                <value name="NUM">
+                    <shadow type="math_number">
+                        <field name="NUM">45</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="math_constant"></block>
+            <block type="math_number_property">
+                <value name="NUMBER_TO_CHECK">
+                    <shadow type="math_number">
+                        <field name="NUM">0</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="math_change">
+                <value name="DELTA">
+                    <shadow type="math_number">
+                        <field name="NUM">1</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="math_round">
+                <value name="NUM">
+                    <shadow type="math_number">
+                        <field name="NUM">3.1</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="math_on_list"></block>
+            <block type="math_modulo">
+                <value name="DIVIDEND">
+                    <shadow type="math_number">
+                        <field name="NUM">64</field>
+                    </shadow>
+                </value>
+                <value name="DIVISOR">
+                    <shadow type="math_number">
+                        <field name="NUM">10</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="math_constrain">
+                <value name="VALUE">
+                    <shadow type="math_number">
+                        <field name="NUM">50</field>
+                    </shadow>
+                </value>
+                <value name="LOW">
+                    <shadow type="math_number">
+                        <field name="NUM">1</field>
+                    </shadow>
+                </value>
+                <value name="HIGH">
+                    <shadow type="math_number">
+                        <field name="NUM">100</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="math_random_int">
+                <value name="FROM">
+                    <shadow type="math_number">
+                        <field name="NUM">1</field>
+                    </shadow>
+                </value>
+                <value name="TO">
+                    <shadow type="math_number">
+                        <field name="NUM">100</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="math_random_float"></block>
+        </category>
+        <category name="Functions" custom="PROCEDURE">
+
+        </category>
+        <category name="Text">
+            <block type="text"></block>
+            <block type="text_print">
+                <value name="TEXT">
+                    <shadow type="text">
+                        <field name="TEXT">hello world</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="text_join"></block>
+            <block type="text_create_join_container"></block>
+            <block type="text_create_join_item"></block>
+            <block type="text_append">
+                <value name="TEXT">
+                    <shadow type="text"></shadow>
+                </value>
+            </block>
+            <block type="text_length">
+                <value name="VALUE">
+                    <shadow type="text">
+                        <field name="TEXT">abc</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="text_isEmpty">
+                <value name="VALUE">
+                    <shadow type="text">
+                        <field name="TEXT"></field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="text_indexOf">
+                <value name="VALUE">
+                    <block type="variables_get">
+                        <field name="VAR">text</field>
+                    </block>
+                </value>
+                <value name="FIND">
+                    <shadow type="text">
+                        <field name="TEXT">abc</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="text_charAt">
+                <value name="VALUE">
+                    <block type="variables_get">
+                        <field name="VAR">text</field>
+                    </block>
+                </value>
+            </block>
+            <block type="text_getSubstring">
+                <value name="STRING">
+                    <block type="variables_get">
+                        <field name="VAR">text</field>
+                    </block>
+                </value>
+            </block>
+            <block type="text_changeCase">
+                <value name="TEXT">
+                    <shadow type="text">
+                        <field name="TEXT">abc</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="text_trim">
+                <value name="TEXT">
+                    <shadow type="text">
+                        <field name="TEXT">abc</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="text_trim"></block>
+            <block type="text_prompt_ext">
+                <value name="TEXT">
+                    <shadow type="text">
+                        <field name="TEXT">prompt</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="text_prompt"></block>
+        </category>
+        <category name="Color">
+            <block type="colour_picker"></block>
+            <block type="colour_random"></block>
+            <block type="colour_rgb">
+                <value name="RED">
+                    <shadow type="math_number">
+                        <field name="NUM">0</field>
+                    </shadow>
+                </value>
+                <value name="GREEN">
+                    <shadow type="math_number">
+                        <field name="NUM">0</field>
+                    </shadow>
+                </value>
+                <value name="BLUE">
+                    <shadow type="math_number">
+                        <field name="NUM">255</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="colour_blend">
+                <value name="COLOUR1">
+                    <shadow type="colour_picker">
+                        <field name="COLOUR">#ff0000</field>
+                    </shadow>
+                </value>
+                <value name="COLOUR2">
+                    <shadow type="colour_picker">
+                        <field name="COLOUR">#0000ff</field>
+                    </shadow>
+                </value>
+                <value name="RATIO">
+                    <shadow type="math_number">
+                        <field name="NUM">.6</field>
+                    </shadow>
+                </value>
+            </block>
+        </category>
+        <category name="Linkbot">
+            <block type="linkbotjs_repeat_loop_delay">
+                <value name="TIMES">
+                    <shadow type="math_number">
+                        <field name="NUM">10</field>
+                    </shadow>
+                </value>
+                <value name="DELAY">
+                    <shadow type="math_number">
+                        <field name="NUM">1</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_while_loop_delay">
+                <value name="DELAY">
+                    <shadow type="math_number">
+                        <field name="NUM">1</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_acquire">
+                <value name="LINKBOTS">
+                    <shadow type="math_number">
+                        <field name="NUM">1</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_connect">
+            </block>
+            <block type="linkbotjs_disconnect">
+                <value name="LINKBOT">
+                    <shadow type="variables_get"></shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_settimeout">
+                <value name="DELAY">
+                    <shadow type="math_number">
+                        <field name="NUM">1</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_color">
+                <value name="COLOR">
+                    <shadow type="colour_picker">
+                        <field name="COLOUR">#ff0000</field>
+                    </shadow>
+                </value>
+                <value name="LINKBOT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+            </block>
+
+            <block type="linkbotjs_buzzer">
+                <value name="LINKBOT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="FREQ">
+                    <shadow type="math_number">
+                        <field name="NUM">800</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_zero">
+                <value name="LINKBOT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_stop">
+                <value name="LINKBOT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_moveright">
+                <value name="LINKBOT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_moveleft">
+                <value name="LINKBOT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_movebackward">
+                <value name="LINKBOT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_moveforward">
+                <value name="LINKBOT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_move_to">
+                <value name="LINKBOT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="1">
+                    <shadow type="math_number">
+                        <field name="NUM">90</field>
+                    </shadow>
+                </value>
+                <value name="2">
+                    <shadow type="math_number">
+                        <field name="NUM">0</field>
+                    </shadow>
+                </value>
+                <value name="3">
+                    <shadow type="math_number">
+                        <field name="NUM">-90</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_move">
+                <value name="LINKBOT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="1">
+                    <shadow type="math_number">
+                        <field name="NUM">90</field>
+                    </shadow>
+                </value>
+                <value name="2">
+                    <shadow type="math_number">
+                        <field name="NUM">0</field>
+                    </shadow>
+                </value>
+                <value name="3">
+                    <shadow type="math_number">
+                        <field name="NUM">-90</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_angular_speed">
+                <value name="LINKBOT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_move_joint">
+                <value name="LINKBOT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="NAME">
+                    <shadow type="math_number">
+                        <field name="NUM">90</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_button_events">
+                <value name="LINKBOT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="BUTTON">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="STATE">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="TIMESTAMP">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_encoder_events">
+                <value name="LINKBOT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="ENCODER">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="ANGLE">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="TIMESTAMP">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_accelerometer_events">
+                <value name="LINKBOT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="X">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="Y">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="Z">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="TIMESTAMP">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+            </block>
+            <block type="linkbotjs_joint_events">
+                <value name="LINKBOT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="JOINT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="STATE">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="TIMESTAMP">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+            </block>
+        </category>
+        <category name="Simulator">
+            <block type="simulator_setlocation">
+                <value name="LINKBOT">
+                    <shadow type="variables_get">
+                    </shadow>
+                </value>
+                <value name="X">
+                    <shadow type="math_number">
+                        <field name="NUM">0</field>
+                    </shadow>
+                </value>
+                <value name="Y">
+                    <shadow type="math_number">
+                        <field name="NUM">0</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="simulator_resetlines"></block>
+        </category>
+    </xml>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" id="xml-load-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Blockly XML Loader</h4>
+            </div>
+            <div class="modal-body">
+                <p>Enter the Blockly XML you would like to load.</p>
+                <textarea id="xml-load-content" class="form-control" rows="10"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="xml-load-apply">Apply</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+</body>
+<script type="text/javascript" src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<script src="js/libs/blockly_compressed.js"></script>
+<script src="js/libs/blocks_compressed.js"></script>
+<script src="js/libs/javascript_compressed.js"></script>
+<script src="js/libs/python_compressed.js"></script>
+<script src="js/blockly_linkbots.js"></script>
+<script src="js/libs/acorn_interpreter.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js"></script>
+<script src="http://dev.linkbotlabs.com/linkbotjs/linkbot.min.js"></script>
+<script src="msg/js/en.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.symbol.min.js"></script>
+<script src="js/simulator.js"></script>
+<script src="js/main.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</html>

@@ -72,6 +72,11 @@ chapter3.controller('driversEdPart1', ['$scope', '$timeout', 'robotFactory', fun
         $scope.m.running = false;
     };
     robotFactory.getRobots(setRobot, 1);
+    Linkbots.setNavigationTitle('Driver\'s Ed Part 1');
+    Linkbots.setNavigationItems([{title:'Introductory Python', url:'/introductory-python/index.html'},
+        {title:'Chapter 3', url:'#/'}, {title:'Driver\'s Ed Part 1', url:'#/'}]);
+    // 1/11 since it's the first of 11 lessons.
+    $('.radial-progress').attr('data-progress', Math.floor((1 / 11) * 100));
 }]).controller('driversEdPart2', ['$scope', '$timeout', 'robotFactory', function($scope, $timeout, robotFactory) {
     function setRobot(robots) {
         $scope.m.robot = robots[0];
@@ -101,6 +106,10 @@ chapter3.controller('driversEdPart1', ['$scope', '$timeout', 'robotFactory', fun
         $scope.m.running = false;
     };
     robotFactory.getRobots(setRobot, 1);
+    Linkbots.setNavigationTitle('Driver\'s Ed Part 2');
+    Linkbots.setNavigationItems([{title:'Introductory Python', url:'/introductory-python/index.html'},
+        {title:'Chapter 3', url:'#/'}, {title:'Driver\'s Ed Part 2', url:'#/drivers-ed-part2'}]);
+    $('.radial-progress').attr('data-progress', Math.floor((2 / 11) * 100));
 }]).controller('driversEdExplore', ['$scope', '$timeout', 'robotFactory', function($scope, $timeout, robotFactory) {
     function setRobot(robots) {
         $scope.m.robot = robots[0];
@@ -138,6 +147,10 @@ chapter3.controller('driversEdPart1', ['$scope', '$timeout', 'robotFactory', fun
         $scope.m.running = false;
     };
     robotFactory.getRobots(setRobot, 1);
+    Linkbots.setNavigationTitle('Driver\'s Ed: Explore');
+    Linkbots.setNavigationItems([{title:'Introductory Python', url:'/introductory-python/index.html'},
+        {title:'Chapter 3', url:'#/'}, {title:'Driver\'s Ed: Explore', url:'#/drivers-ed-explore'}]);
+    $('.radial-progress').attr('data-progress', Math.floor((3 / 11) * 100));
 }]).controller('driversEdChallenge', ['$scope', '$timeout', 'robotFactory', function($scope, $timeout, robotFactory) {
     function setRobot(robots) {
         $scope.m.robot = robots[0];
@@ -195,6 +208,10 @@ chapter3.controller('driversEdPart1', ['$scope', '$timeout', 'robotFactory', fun
         }
     };
     robotFactory.getRobots(setRobot, 1);
+    Linkbots.setNavigationTitle('Driver\'s Ed: Challenge');
+    Linkbots.setNavigationItems([{title:'Introductory Python', url:'/introductory-python/index.html'},
+        {title:'Chapter 3', url:'#/'}, {title:'Driver\'s Ed: Challenge', url:'#/drivers-ed-challenge'}]);
+    $('.radial-progress').attr('data-progress', Math.floor((4 / 11) * 100));
 }]).controller('lessonOneController', ['$scope', '$timeout', 'robotFactory', function($scope, $timeout, robotFactory) {
     function setRobot(robots) {
         $scope.m.robot = robots[0];
@@ -224,6 +241,10 @@ chapter3.controller('driversEdPart1', ['$scope', '$timeout', 'robotFactory', fun
         $scope.m.running = false;
     };
     robotFactory.getRobots(setRobot, 1);
+    Linkbots.setNavigationTitle('Lesson One');
+    Linkbots.setNavigationItems([{title:'Introductory Python', url:'/introductory-python/index.html'},
+        {title:'Chapter 3', url:'#/'}, {title:'Lesson One', url:'#/lesson-one'}]);
+    $('.radial-progress').attr('data-progress', Math.floor((5 / 11) * 100));
 }]).controller('lessonTwoController', ['$scope', '$timeout', 'robotFactory', function($scope, $timeout, robotFactory) {
     function setRobot(robots) {
         $scope.m.robot = robots[0];
@@ -255,6 +276,10 @@ chapter3.controller('driversEdPart1', ['$scope', '$timeout', 'robotFactory', fun
         $scope.m.running = false;
     };
     robotFactory.getRobots(setRobot, 1);
+    Linkbots.setNavigationTitle('Lesson Two');
+    Linkbots.setNavigationItems([{title:'Introductory Python', url:'/introductory-python/index.html'},
+        {title:'Chapter 3', url:'#/'}, {title:'Lesson Two', url:'#/lesson-two'}]);
+    $('.radial-progress').attr('data-progress', Math.floor((6 / 11) * 100));
 }]).controller('lessonThreeController', ['$scope', '$timeout', 'robotFactory', function($scope, $timeout, robotFactory) {
     function setRobot(robots) {
         $scope.m.robot = robots[0];
@@ -288,6 +313,10 @@ chapter3.controller('driversEdPart1', ['$scope', '$timeout', 'robotFactory', fun
         $scope.m.running = false;
     };
     robotFactory.getRobots(setRobot, 1);
+    Linkbots.setNavigationTitle('Lesson Three');
+    Linkbots.setNavigationItems([{title:'Introductory Python', url:'/introductory-python/index.html'},
+        {title:'Chapter 3', url:'#/'}, {title:'Lesson Three', url:'#/lesson-three'}]);
+    $('.radial-progress').attr('data-progress', Math.floor((7 / 11) * 100));
 }]).controller('lessonFourController', ['$scope', '$timeout', 'robotFactory', function($scope, $timeout, robotFactory) {
     function setRobot(robots) {
         $scope.m.robot = robots[0];
@@ -321,6 +350,10 @@ chapter3.controller('driversEdPart1', ['$scope', '$timeout', 'robotFactory', fun
         $scope.m.running = false;
     };
     robotFactory.getRobots(setRobot, 1);
+    Linkbots.setNavigationTitle('Lesson Four');
+    Linkbots.setNavigationItems([{title:'Introductory Python', url:'/introductory-python/index.html'},
+        {title:'Chapter 3', url:'#/'}, {title:'Lesson Four', url:'#/lesson-four'}]);
+    $('.radial-progress').attr('data-progress', Math.floor((8 / 11) * 100));
 }]).controller('lessonFiveController', ['$scope', '$timeout', 'robotFactory', function($scope, $timeout, robotFactory) {
     function setRobot(robots) {
         $scope.m.robot = robots[0];
@@ -354,6 +387,10 @@ chapter3.controller('driversEdPart1', ['$scope', '$timeout', 'robotFactory', fun
         $scope.m.running = false;
     };
     robotFactory.getRobots(setRobot, 1);
+    Linkbots.setNavigationTitle('Lesson Five');
+    Linkbots.setNavigationItems([{title:'Introductory Python', url:'/introductory-python/index.html'},
+        {title:'Chapter 3', url:'#/'}, {title:'Lesson Five', url:'#/lesson-five'}]);
+    $('.radial-progress').attr('data-progress', Math.floor((9 / 11) * 100));
 }]).controller('lessonSixController', ['$scope', '$timeout', 'robotFactory', function($scope, $timeout, robotFactory) {
     function setRobot(robots) {
         $scope.m.robot = robots[0];
@@ -387,6 +424,10 @@ chapter3.controller('driversEdPart1', ['$scope', '$timeout', 'robotFactory', fun
         $scope.m.running = false;
     };
     robotFactory.getRobots(setRobot, 1);
+    Linkbots.setNavigationTitle('Lesson Six');
+    Linkbots.setNavigationItems([{title:'Introductory Python', url:'/introductory-python/index.html'},
+        {title:'Chapter 3', url:'#/'}, {title:'Lesson Six', url:'#/lesson-six'}]);
+    $('.radial-progress').attr('data-progress', Math.floor((10 / 11) * 100));
 }]).controller('lessonSevenController', ['$scope', '$timeout', 'robotFactory', function($scope, $timeout, robotFactory) {
     function setRobot(robots) {
         $scope.m.robot = robots[0];
@@ -427,6 +468,10 @@ chapter3.controller('driversEdPart1', ['$scope', '$timeout', 'robotFactory', fun
     };
     robotFactory.getRobots(setRobot, 1);
     $scope.radiusChange();
+    Linkbots.setNavigationTitle('Lesson Seven');
+    Linkbots.setNavigationItems([{title:'Introductory Python', url:'/introductory-python/index.html'},
+        {title:'Chapter 3', url:'#/'}, {title:'Lesson Seven', url:'#/lesson-seven'}]);
+    $('.radial-progress').attr('data-progress', Math.floor((11 / 11) * 100));
 }]);
 /**
  * Created by Adam on 3/2/2015.
@@ -466,6 +511,33 @@ chapter3.directive('contenteditable', ['$sce', function($sce) {
                 } else {
                     ngModel.$setViewValue(html);
                 }
+            }
+        }
+    };
+}]).directive('modifiable', ['$timeout', function($timeout) {
+    return {
+        restrict: 'E',
+        transclude: true,
+        template: '<span class="{{inputClass}} modifiable" ng-hide="modifying" ng-click="modifying = modifying ? false : true" ng-transclude></span><input type="{{inputType}}" ng-model="modData" ng-show="modifying" ng-blur="modifying = false" />',
+        scope: {
+            modData: '='
+        },
+        link: {
+            pre: function(scope, element, attrs) {
+                scope.inputType = attrs.number ? "number" : "text";
+                scope.inputClass = attrs.number ? "hljs-number" : "hljs-string";
+            },
+            post: function(scope, element) {
+                scope.$watch('modifying', function(newValue, oldValue) {
+                    var inputElement;
+                    if (newValue && !oldValue) {
+                        inputElement = element.children()[1];
+                        $timeout(function() {
+                            inputElement.focus();
+                            inputElement.select();
+                        }, 10);
+                    }
+                });
             }
         }
     };

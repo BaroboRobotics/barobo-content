@@ -18724,6 +18724,7 @@ var buttonEventCallbacks = {};
 var encoderEventCallbacks = {};
 var accelerometerEventCallbacks = {};
 var jointEventCallbacks = {};
+var robotEvents = [];
 
 function addCallback (func) {
     var token = requestId++;
@@ -18844,6 +18845,9 @@ asyncBaroboBridge.buttonEvent.connect(
                 }
             }
         }
+        robotEvents.forEach(function(event) {
+            event(id, 'buttonEvent', buttonNumber, eventType, timestamp);
+        });
     }
 );
 asyncBaroboBridge.encoderEvent.connect(
@@ -18859,6 +18863,9 @@ asyncBaroboBridge.encoderEvent.connect(
                 }
             }
         }
+        robotEvents.forEach(function(event) {
+            event(id, 'encoderEvent', jointNumber, anglePosition, timestamp);
+        });
     }
 );
 asyncBaroboBridge.jointEvent.connect(
@@ -18868,6 +18875,9 @@ asyncBaroboBridge.jointEvent.connect(
             var obj = objs[i];
             obj.callback(obj.robot, obj.data, {jointNumber: jointNumber, eventType: eventType, timestamp: timestamp});
         }
+        robotEvents.forEach(function(event) {
+            event(id, 'jointEvent', jointNumber, eventType, timestamp);
+        });
     }
 );
 asyncBaroboBridge.accelerometerEvent.connect(
@@ -18879,6 +18889,9 @@ asyncBaroboBridge.accelerometerEvent.connect(
                 obj.callback(obj.robot, obj.data, {x: x, y: y, z: z, timestamp: timestamp});
             }
         }
+        robotEvents.forEach(function(event) {
+            event(id, 'accelerometerEvent', x, y, z, timestamp);
+        });
     }
 );
 
@@ -18895,6 +18908,16 @@ asyncBaroboBridge.relinquish.connect(
         manager.relinquish(manager.getRobot(id));
     }
 );
+
+function logError(error) {
+    if (console) {
+        if (console.error) {
+            console.error(error);
+        } else if (console.log) {
+            console.log(error);
+        }
+    }
+}
 
 function rgbToHex(value) {
     if (!value || value === null || value === "undefined") {
@@ -18922,7 +18945,16 @@ function colorToHex(color) {
 module.exports.startFirmwareUpdate = function() {
     firmware.startUpdater();
 };
-
+/**
+ * Linkbot.
+ * @class AsyncLinkbot
+ * @param _id {string} The id of the linkbot.
+ * @constructor
+ * @property _wheelRadius {number} The wheel radius.
+ * @property status {string} The status of the linkbot.
+ * @property version {string} The firmware version.
+ * @property id {string} The robot id.
+ */
 module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
     var bot = this;
     var statuses = {0:"offline", 1:"ready", 2:"acquired", 3:"update"};
@@ -18933,8 +18965,83 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
     var driveToValue = null;
     var driveToCalled = false;
     var version = null;
-    
+    var events = {};
+    robotEvents.push(eventHandler);
+    /**
+     * Enumeration constants.
+     * @type {{Button, ButtonState, FormFactor, JointState}}
+     */
     bot.enums = enumConstants;
+
+    function eventHandler(identifier, eventName, a, b, c, d) {
+        if (id !== identifier) {
+            return;
+        }
+        if (eventName === 'buttonEvent') {
+            buttonEvent(a, b, c);
+        }
+        if (eventName === 'encoderEvent') {
+            encoderEvent(a, b, c);
+        }
+        if (eventName === 'accelerometerEvent') {
+            accelerometerEvent(a, b, c, d);
+        }
+        if (eventName === 'jointEvent') {
+            jointEvent(a, b, c);
+        }
+    }
+
+    function buttonEvent(button, state, timestamp) {
+        var buttonEvents = events['buttonEvent'];
+        if (buttonEvents && Array.isArray(buttonEvents)) {
+            buttonEvents.forEach(function(event) {
+                try {
+                    event(button, state, timestamp);
+                } catch(err) {
+                    logError(err);
+                }
+            });
+        }
+    }
+
+    function encoderEvent(encoder, angle, timestamp) {
+        var encoderEvents = events['encoderEvent'];
+        if (encoderEvents &&  Array.isArray(encoderEvents)) {
+            encoderEvents.forEach(function(event) {
+                try {
+                    event(encoder, angle, timestamp);
+                } catch(err) {
+                    logError(err);
+                }
+            });
+        }
+    }
+
+    function accelerometerEvent(x, y, z, timestamp) {
+        var accelerometerEvents = events['accelerometerEvent'];
+        if (accelerometerEvents && Array.isArray(accelerometerEvents)) {
+            accelerometerEvents.forEach(function(event) {
+                try {
+                    event(x, y, z, timestamp);
+                } catch(err) {
+                    logError(err);
+                }
+            });
+        }
+    }
+
+    function jointEvent(joint, state, timestamp) {
+        var jointEvents = events['jointEvent'];
+        if (jointEvents && Array.isArray(jointEvents)) {
+            jointEvents.forEach(function(event) {
+                try {
+                    event(joint, state, timestamp);
+                } catch (err) {
+                    logError(err);
+                }
+            });
+        }
+    }
 
     function driveToCallback(error) {
         driveToCalled = false;
@@ -18965,7 +19072,7 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             window.console.warn('error occurred checking firmware version [' + error.category + '] :: ' + error.message);
         }
     }
-    
+
     bot._wheelPositions = [0, 0, 0];
     // Public
     bot.__defineGetter__("_wheelRadius", function(){
@@ -19003,7 +19110,28 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
     bot.__defineGetter__("_id", function() {
         return id;
     });
-    
+    /**
+     * Color value.
+     * @typedef ColorType
+     * @property {number} red Value between 0 to 255 representing the red color value.
+     * @property {number} green Value between 0 to 255 representing the red color value.
+     * @property {number} blue Value between 0 to 255 representing the red color value.
+     */
+
+    /**
+     * Color Callback.
+     *
+     * @callback robotColorCallback
+     * @param {ColorType} color The color values.
+     */
+
+    /**
+     * Returns the robot LED color in a callback.
+     * @function getColor
+     * @memberOf AsyncLinkbot
+     * @param {robotColorCallback} callback The color callback.
+     * @instance
+     */
     bot.getColor = function(callback) {
         asyncBaroboBridge.getLedColor(id, addCallback(function(error, data) {
             if (0 == error.code) {
@@ -19013,6 +19141,19 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             }
         }));
     };
+    /**
+     * Hex Color Callback.
+     * @callback robotHexColorCallback
+     * @param {string} hexColor A hex string representing the LED color value.
+     */
+
+    /**
+     * Returns the robot LED color in a callback.
+     * @function getHexColor
+     * @memberOf AsyncLinkbot
+     * @param {robotHexColorCallback} callback The color callback.
+     * @instance
+     */
     bot.getHexColor = function(callback) {
         asyncBaroboBridge.getLedColor(id, addCallback(function(error, data) {
             if (0 == error.code) {
@@ -19023,6 +19164,15 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
         }));
         
     };
+    /**
+     * Sets the robots LED value.
+     * @function color
+     * @memberOf AsyncLinkbot
+     * @param r {number} The red value between 0 and 255.
+     * @param g {number} The green value between 0 and 255.
+     * @param b {number} The blue value between 0 and 255.
+     * @instance
+     */
     bot.color = function(r, g, b) {
         if (status != 0 && status != 3) {
             var token = addGenericCallback();
@@ -19030,6 +19180,15 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             bot.event.trigger('changed');
         }
     };
+    /**
+     * Sets the motor angular speed.
+     * @function angularSpeed
+     * @memberOf AsyncLinkbot
+     * @param s1 {number} The angular speed value for motor 1.
+     * @param s2 {number} The angular speed value for motor 2.
+     * @param s3 {number} The angular speed value for motor 3.
+     * @instance
+     */
     bot.angularSpeed = function(s1, s2, s3) {
         if (s2 === null) {
             s2 = s1;
@@ -19042,21 +19201,47 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             asyncBaroboBridge.setJointSpeeds(id, token, 7, s1, s2, s3);
         }
     };
-
+    /**
+     * Runs the motors the specified number of degrees.  Positive values move
+     * the wheel clockwise.
+     * @function move
+     * @memberOf AsyncLinkbot
+     * @param r1 {number} value to move motor 1 to.
+     * @param r2 {number} value to move motor 2 to.
+     * @param r3 {number} value to move motor 3 to.
+     * @instance
+     */
     bot.move = function(r1, r2, r3) {
         if (status != 0 && status != 3) {
             var token = addGenericCallback();
             asyncBaroboBridge.move(id, token, 7, r1, r2, r3);
         }
     };
-
+    /**
+     * Moves the motors to a particular absolute position. The Linkbot has an
+     * internal sense of zero that it uses for this method.
+     * @function moveTo
+     * @memberOf AsyncLinkbot
+     * @param r1 {number} value to move motor 1 to.
+     * @param r2 {number} value to move motor 2 to.
+     * @param r3 {number} value to move motor 3 to.
+     * @instance
+     */
     bot.moveTo = function(r1, r2, r3) {
         if (status != 0 && status != 3) {
             var token = addGenericCallback();
             asyncBaroboBridge.moveTo(id, token, 7, r1, r2, r3);
         }
     };
-
+    /**
+     * Moves a single motor to a particular absolute position.
+     * @function moveToOneMotor
+     * @see AsyncLinkbot.moveTo
+     * @memberOf AsyncLinkbot
+     * @param joint {number} The motor joint to move (0, 1, or 2).
+     * @param position {number} The position to move the motor to.
+     * @instance
+     */
     bot.moveToOneMotor = function(joint, position) {
         if (status != 0 && status != 3) {
             var token = addGenericCallback();
@@ -19071,14 +19256,32 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             asyncBaroboBridge.moveTo(id, token, mask, position, position, position);
         }
     };
-
+    /**
+     * Drives the motors the specified number of degrees.  Positive values move
+     * the wheel clockwise.
+     * @function drive
+     * @memberOf AsyncLinkbot
+     * @param r1 {number} value to drive motor 1 to.
+     * @param r2 {number} value to drive motor 2 to.
+     * @param r3 {number} value to drive motor 3 to.
+     * @instance
+     */
     bot.drive = function(r1, r2, r3) {
         if (status != 0 && status != 3) {
             var token = addGenericCallback();
             asyncBaroboBridge.drive(id, token, 7, r1, r2, r3);
         }
     };
-
+    /**
+     * Drives the motors to a particular absolute position. The Linkbot has an
+     * internal sense of zero that it uses for this method.
+     * @function driveTo
+     * @memberOf AsyncLinkbot
+     * @param r1 {number} value to drive motor 1 to.
+     * @param r2 {number} value to drive motor 2 to.
+     * @param r3 {number} value to drive motor 3 to.
+     * @instance
+     */
     bot.driveTo = function(r1, r2, r3) {
         if (status != 0 && status != 3) {
             if (driveToCalled) {
@@ -19090,7 +19293,12 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             }
         }
     };
-
+    /**
+     * Moves an I-Linkbot in the forward direction.
+     * @function moveForward
+     * @memberOf AsyncLinkbot
+     * @instance
+     */
     bot.moveForward = function() {
         joinDirection[0] = 1;
         joinDirection[2] = -1;
@@ -19099,6 +19307,12 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             asyncBaroboBridge.moveContinuous(id, token, 7, joinDirection[0], joinDirection[1], joinDirection[2]);
         }
     };
+    /**
+     * Moves an I-Linkbot in the backwards direction.
+     * @function moveBackward
+     * @memberOf AsyncLinkbot
+     * @instance
+     */
     bot.moveBackward = function() {
         joinDirection[0] = -1;
         joinDirection[2] = 1;
@@ -19107,6 +19321,12 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             asyncBaroboBridge.moveContinuous(id, token, 7, joinDirection[0], joinDirection[1], joinDirection[2]);
         }
     };
+    /**
+     * Moves an I-Linkbot to the left.
+     * @function moveBackward
+     * @memberOf AsyncLinkbot
+     * @instance
+     */
     bot.moveLeft = function() {
         joinDirection[0] = -1;
         joinDirection[2] = -1;
@@ -19115,6 +19335,12 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             asyncBaroboBridge.moveContinuous(id, token, 7, joinDirection[0], joinDirection[1], joinDirection[2]);
         }
     };
+    /**
+     * Moves an I-Linkbot to the right.
+     * @function moveBackward
+     * @memberOf AsyncLinkbot
+     * @instance
+     */
     bot.moveRight = function() {
         joinDirection[0] = 1;
         joinDirection[2] = 1;
@@ -19123,6 +19349,15 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             asyncBaroboBridge.moveContinuous(id, token, 7, joinDirection[0], joinDirection[1], joinDirection[2]);
         }
     };
+    /**
+     * Moves a Joint continuously in a specific direction.
+     * @function moveJointContinuous
+     * @memberOf AsyncLinkbot
+     * @param joint {number} The robot motor number to move.
+     * @param direction {number} (1,0, or -1) Positive numbers move the robot motor in the positive direction, zero stops and -1 moves the motor in the negative direction.
+     * @return {boolean} True if the input was valid and sent to the robot.
+     * @instance
+     */
     bot.moveJointContinuous = function(joint, direction) {
         var token, mask = 0;
         if (joint >= 0 && joint <= 2) {
@@ -19152,6 +19387,27 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
         }
         return false;
     };
+    /**
+     * Wheel Positions type.
+     * @typedef WheelPositionsType
+     * @property {Array.number} values An array containing the wheel positions.
+     * @property {number} timestamp A timestamp of when representing the time the wheels were at that position.
+     * if there was an error the timestamp will be set to -1.
+     */
+
+    /**
+     * Wheel Positions Callback.
+     * @callback robotWheelPositionsCallback
+     * @param {WheelPositionsType} positions The wheel position values.
+     */
+
+    /**
+     * Call to get the wheel positions of the Linkbot.
+     * @function wheelPositions
+     * @memberOf AsyncLinkbot
+     * @param callback {robotWheelPositionsCallback} A callback that returns the wheel positions.
+     * @instance
+     */
     bot.wheelPositions = function(callback) {
         if (status != 0 && status != 3) {
             var token = addCallback(function(error, data) {
@@ -19165,7 +19421,19 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             asyncBaroboBridge.getJointAngles (id, token);
         }
     };
+    /**
+     * Joint Speeds Callback.
+     * @callback robotJointSpeedsCallback
+     * @param {Array.number} speeds An array of joint speeds.
+     */
 
+    /**
+     * Call to get the joint speeds of the Linkbot.
+     * @function getJointSpeeds
+     * @memberOf AsyncLinkbot
+     * @param callback {robotJointSpeedsCallback} The joint speeds returned as a callback.
+     * @instance
+     */
     bot.getJointSpeeds = function(callback) {
         if (status != 0 && status != 3) {
             var token = addCallback(function(error, data) {
@@ -19179,6 +19447,12 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
         }
     };
 
+    /**
+     * Stops all motors on the robot.
+     * @function stop
+     * @memberOf AsyncLinkbot
+     * @instance
+     */
     bot.stop = function() {
         joinDirection[0] = 0;
         joinDirection[2] = 0;
@@ -19188,6 +19462,13 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
         }
     };
 
+    /**
+     * Sets the buzzer frequency for the robot.  This is how you make it make sounds.
+     * @function buzzerFrequency
+     * @memberOf AsyncLinkbot
+     * @param freq {number} The frequency value.
+     * @instance
+     */
     bot.buzzerFrequency = function(freq) {
         if (status != 0 && status != 3) {
             var token = addGenericCallback();
@@ -19195,6 +19476,12 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
         }
     };
 
+    /**
+     * Moves all the Linkbot motors to the zero position.
+     * @function zero
+     * @memberOf AsyncLinkbot
+     * @instance
+     */
     bot.zero = function() {
       if (asyncBaroboBridge.resetEncoderRevs) {
           var token = addCallback(function(error) {
@@ -19211,7 +19498,23 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
           bot.moveTo(0, 0, 0);
       }
     };
+    /**
+     * Form Factor Callback.
+     * ex.
+     * linkbot.getFormFactor(function(data) {
+     *       if (linkbot.enums.FormFactor.I == data) {
+     *           // The linkbot is an I-Linkbot.
+     *       }
+     * });
+     * @callback robotFormFactorCallback
+     * @param {enum} FormFactor the form factor is returned and should be checked against the enums.FormFactor.
+     */
 
+    /**
+     * Returns the Linkbot form factor.
+     * @param callback {robotFormFactorCallback} The form factor as a callback.
+     * @instance
+     */
     bot.getFormFactor = function(callback) {
         if (status != 0 && status != 3  && callback) {
             var token = addCallback(function(error, data) {
@@ -19225,6 +19528,13 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
         }
     };
 
+    /**
+     * Disconnects from the Linkbot.  It also calls the stop() and unregister methods before disconnecting.
+     * @function disconnect
+     * @memberOf AsyncLinkbot
+     * @return {string} The Linkbot id.
+     * @instance
+     */
     bot.disconnect = function() {
         bot.stop();
         bot.unregister();
@@ -19236,6 +19546,13 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
         return id;
     };
 
+    /**
+     * Connects to a Linkbot.
+     * @function connect
+     * @memberOf AsyncLinkbot
+     * @param callback {Object} the callback is called if there was an error.  The error object is returned.
+     * @instance
+     */
     bot.connect = function(callback) {
         var token;
         if (status == 0) {
@@ -19279,7 +19596,89 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             asyncBaroboBridge.getLedColor(id, token);
         }
     };
-    // This is a deprecated method.
+    bot.on = function(eventName, callback) {
+        if (eventName === 'jointEvent' || eventName === 'buttonEvent' || eventName === 'accelerometerEvent' || eventName === 'encoderEvent') {
+            // Ignore any other event name.
+            var callbacks = events[eventName];
+            if (callbacks && Array.isArray(callbacks)) {
+                callbacks.push(callback);
+            } else {
+                callbacks = [];
+                callbacks.push(callback);
+                events[eventName] = callbacks;
+                var token = addGenericCallback();
+                if (eventName === 'buttonEvent') {
+                    asyncBaroboBridge.enableButtonEvents(id, token, true);
+                } else if (eventName === 'jointEvent') {
+                    asyncBaroboBridge.enableJointEvents(id, token, true);
+                } else if (eventName === 'accelerometerEvent') {
+                    asyncBaroboBridge.enableAccelerometerEvents(id, token, true);
+                } else if (eventName === 'encoderEvent') {
+                    asyncBaroboBridge.enableEncoderEvents(id, token, 1, true);
+                }
+            }
+        }
+    };
+    /**
+     * Acceleration connection type.
+     * @typedef  AccelConnectionType
+     * @property callback {function} The function to be called back for acceleration events.
+     * function(robot, data, event) - The data is what you set when you registered.  The event is an object with x, y, z
+     * values.
+     * @property data {Object} Optional the data you want returned on callback.
+     */
+
+    /**
+     * Button connection type.
+     * @typedef  ButtonConnectionType
+     * @property {Object} 0 The button number to register for as an object. See enums for button numbers.
+     * ex.
+     * {
+     *     0: {
+     *          callback: function(robot, data, event) { ... }
+     *          data: ...
+     *        }
+     * }
+     */
+
+    /**
+     * Wheel connection type.
+     * @typedef  WheelConnectionType
+     * @property {Object} 0 The motor number (starts at zero) to register for as an object.
+     * ex.
+     * {
+     *     0: {
+     *          callback: function(robot, data, event) { ... }
+     *          data: ...
+     *          distance: (this is optional and specifies the granularity).
+     *        }
+     * }
+     */
+
+    /**
+     * Joint connection type.
+     * @typedef  JointConnectionType
+     * @property callback {function} The function to be called back for acceleration events.
+     * function(robot, data, event) - The data is what you set when you registered.  The event is an object with x, y, z
+     * values.
+     * @property data {Object} Optional the data you want returned on callback.
+     */
+
+    /**
+     * @typedef ConnectionsType
+     * @property accel {AccelConnectionType} Optional object that contains accel callback and data.
+     * @property button {ButtonConnectionType} Optional object that contains button callback and data.
+     * @property wheel {WheelConnectionType} Optional object that contains wheel callback and data.
+     * @property joint {JointConnectionType} Option object that contains joint callback and data.
+     */
+
+    /**
+     * Registers for Linkbot events.
+     * @function register
+     * @memberOf AsyncLinkbot
+     * @param connections {ConnectionsType} an object containing callbacks and data you want to register for.
+     * @instance
+     */
     bot.register = function(connections) {
         var obj, token;
         if (status == 0 || status == 3 || typeof(connections) == 'undefined') {
@@ -19340,25 +19739,23 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
             asyncBaroboBridge.enableAccelerometerEvents(id, token, true);
         }
     };
-    // This is a deprecated method.
+    /**
+     * Unregisters from Linkbot events.
+     * @function unregister
+     * @memberOf AsyncLinkbot
+     * @instance
+     */
     bot.unregister = function() {
         var token;
-        if (buttonEventCallbacks.hasOwnProperty(id) && buttonEventCallbacks[id].length > 0) {
-            token = addGenericCallback();
-            asyncBaroboBridge.enableButtonEvents (id, token, false);
-        }
-        if (encoderEventCallbacks.hasOwnProperty(id) && encoderEventCallbacks[id].length > 0) {
-            token = addGenericCallback();
-            asyncBaroboBridge.enableEncoderEvents(id, token, 5.0, false);
-        }
-        if (accelerometerEventCallbacks.hasOwnProperty(id) && accelerometerEventCallbacks[id].length > 0) {
-            token = addGenericCallback();
-            asyncBaroboBridge.enableAccelerometerEvents(id, token, false);
-        }
-        if (jointEventCallbacks.hasOwnProperty(id) && jointEventCallbacks[id].length > 0) {
-            token = addGenericCallback();
-            asyncBaroboBridge.enableJointEvents(id, token, false);
-        }
+        token = addGenericCallback();
+        asyncBaroboBridge.enableButtonEvents (id, token, false);
+        token = addGenericCallback();
+        asyncBaroboBridge.enableEncoderEvents(id, token, 5.0, false);
+        token = addGenericCallback();
+        asyncBaroboBridge.enableAccelerometerEvents(id, token, false);
+        token = addGenericCallback();
+        asyncBaroboBridge.enableJointEvents(id, token, false);
+        events = {};
     };
     bot.event = eventlib.Events.extend({});
     /**
@@ -19376,44 +19773,131 @@ module.exports.AsyncLinkbot = function AsyncLinkbot(_id) {
 var manager = require('./manager.jsx');
 var uimanager = require('./manager-ui.jsx');
 var config = require('./config.jsx');
-
+var botlib = require('./linkbot.jsx');
+/**
+ * Linkbots API interface.
+ * @namespace Linkbots
+ */
 window.Linkbots = (function(){
     var mod = {};
     var startOpen = false;
 
+    /**
+     * Adds a Robot to the robot manager.
+     * @function addRobot
+     * @memberOf Linkbots
+     * @param id {string} The robot id to add.
+     */
     mod.addRobot = function(id) {
+
         manager.addRobot(id);
     };
+    /**
+     * @function removeRobot
+     * @memberOf Linkbots
+     * @desc Removes a Robot from the robot manager.
+     * @param id {string} The robot id to remove.
+     */
     mod.removeRobot = function(id) {
         manager.removeRobot(id);
     };
+    /**
+     * Opens the robot manager side menu.
+     * @function openSideMenu
+     * @memberOf Linkbots
+     */
     mod.openSideMenu = function() {
         uimanager.uiEvents.trigger('show-menu');
     };
+    /**
+     * Closes the robot manager side menu.
+     * @function closeSideMenu
+     * @memberOf Linkbots
+     */
     mod.closeSideMenu = function() {
         uimanager.uiEvents.trigger('hide-menu');
     };
+
+    /**
+     * @typedef AcquiredType
+     * @type Object
+     * @property {Array.<AsyncLinkbot>} robots An array of robots.
+     * @property {number} registered The total number of registered robots.
+     * @property {number} ready The total number of robots in the ready state.
+     */
+
+    /**
+     * Acquires available robots from the robot manager and marks them as acquired.
+     * @function acquire
+     * @memberOf Linkbots
+     * @param count {int} The number of robots you wish to acquire.
+     * @return {AcquiredType}
+     */
     mod.acquire = function(count) {
         return manager.acquire(count);
     };
+    /**
+     * Relinquishes the robot back to the robot manager.  It's the opposite of acquire.
+     * @function relinquish
+     * @memberOf Linkbots
+     * @param {AsyncLinkbot} bot The linkbot that you no longer are using and wish to make available.
+     */
     mod.relinquish = function(bot) {
         return manager.relinquish(bot);
     };
+    mod.relinquishAll = function() {
+        return manager.relinquishAll();
+    };
+    /**
+     * Scans for linkbots.
+     * @function scan
+     * @memberOf Linkbots
+     */
     mod.scan = function() {
         return baroboBridge.scan();
     };
+    /**
+     * If True is passed in the robot manager menu starts open.
+     * @function startOpen
+     * @memberOf Linkbots
+     * @param value {boolean}.
+     */
     mod.startOpen = function(value) {
         startOpen = value;
     };
+    /**
+     * Sets the title in the top navigation.
+     * @function setNavigationTitle
+     * @memberOf Linkbots
+     * @param title {string} The title to set.
+     */
     mod.setNavigationTitle = function(title) {
         manager.setNavigationTitle(title);
     };
+    /**
+     * Adds a breadcrumb to the top navigation.
+     * @function addNavigationItem
+     * @memberOf Linkbots
+     * @param navItemObject {object} An object containing a url and a title.
+     */
     mod.addNavigationItem = function(navItemObject) {
         manager.addNavigationItem(navItemObject);
     };
+    /**
+     * Sets the breadcrumbs to the array of navigation items.  Replacing the existing breadcrumbs.
+     * @function setNavigationItems
+     * @memberOf Linkbots
+     * @param navItemArray {array} An array of navigation objects.  A navigation object contains a url and title.
+     */
     mod.setNavigationItems = function(navItemArray) {
         manager.setNavigationItems(navItemArray);
     };
+    /**
+     * Adds an array of breadcrumbs to the top navigation.
+     * @function addNavigationItems
+     * @memberOf Linkbots
+     * @param navItemArray {array} An array of navigation objects.  A navigation object contains a url and title.
+     */
     mod.addNavigationItems = function(navItemArray) {
         manager.addNavigationItems(navItemArray);
     };
@@ -19432,8 +19916,18 @@ window.Linkbots = (function(){
         }
         return pathways;
     };
+    /**
+     * TODO: document manager events.
+     */
     mod.managerEvents = manager.event;
+    /**
+     * TODO document ui events.
+     * @type {*|uiEvents|l}
+     */
     mod.uiEvents = uimanager.uiEvents;
+    mod.model = {
+        AsyncLinkbot : botlib.AsyncLinkbot
+    };
 
     if(window.attachEvent) {
         window.attachEvent('onload', function() {
@@ -19465,7 +19959,7 @@ window.Linkbots = (function(){
     return mod;
 
 })();
-},{"./config.jsx":151,"./manager-ui.jsx":156,"./manager.jsx":157}],156:[function(require,module,exports){
+},{"./config.jsx":151,"./linkbot.jsx":154,"./manager-ui.jsx":156,"./manager.jsx":157}],156:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -19479,7 +19973,7 @@ var direction = [0, 0, 0];
 var secondMotor = 2;
 var knob1Timer = null;
 var knob2Timer = null;
-var syncKnobsWithMotors = true;
+var syncKnobsWithMotors = false;
 
 /* hasClass, addClass and removeClass from http://www.openjs.com/scripts/dom/class_manipulation.php */
 function hasClass(ele,cls) {
@@ -19715,6 +20209,7 @@ var KnobControl = React.createClass({displayName: "KnobControl",
     getDefaultProps: function() {
         return {
             value: 0,
+            motorValue: 0,
             hasChanged: function() {},
             mouseUp: function() {},
             mouseClicked: function() {}
@@ -20245,6 +20740,14 @@ var RobotManagerSideMenu = React.createClass({displayName: "RobotManagerSideMenu
         this.refs.container.getDOMNode().style.height = '';
         this.refs.container.getDOMNode().style.height = (document.body.scrollHeight - 75) + "px";
     },
+    onScroll: function() {
+        var documentHeight = document.body.scrollHeight - 75;
+        var myHeight = this.refs.container.getDOMNode().scrollHeight;
+        if (documentHeight != myHeight) {
+            this.refs.container.getDOMNode().style.height = '';
+            this.refs.container.getDOMNode().style.height = (document.body.scrollHeight - 75) + "px";
+        }
+    },
     componentWillMount: function() {
         var me = this;
         uiEvents.on('hide', function() {
@@ -20265,9 +20768,11 @@ var RobotManagerSideMenu = React.createClass({displayName: "RobotManagerSideMenu
             me.refs.dongleUpdate.getDOMNode().className = 'ljs-dongle-firmware ljs-hidden';
         });
         window.addEventListener('resize', this.handleResize);
+        window.addEventListener('scroll', this.onScroll);
     },
     componentWillUnmount: function() {
         window.removeEventListener('resize', this.handleResize);
+        window.removeEventListener('scroll', this.onScroll);
     },
     hideMenu: function() {
         this.refs.slideBtn.getDOMNode().className = 'ljs-handlebtn ljs-handlebtn-right';
@@ -20310,8 +20815,10 @@ var RobotManagerSideMenu = React.createClass({displayName: "RobotManagerSideMenu
         var style = { height: (document.body.scrollHeight - 75) + "px"};
         return (
             React.createElement("div", {id: "ljs-left-menu-container", style: style, ref: "container"}, 
-                React.createElement("div", {className: "ljs-handle"}, 
-                    React.createElement("span", {onClick: this.handleSlide, className: "ljs-handlebtn ljs-handlebtn-right", ref: "slideBtn"})
+                React.createElement("div", {className: "ljs-handle-wrapper"}, 
+                    React.createElement("div", {className: "ljs-handle"}, 
+                        React.createElement("span", {onClick: this.handleSlide, className: "ljs-handlebtn ljs-handlebtn-right", ref: "slideBtn"})
+                    )
                 ), 
                 React.createElement("div", {className: "ljs-content"}, 
                     React.createElement(AddRobotForm, null), 
@@ -21225,7 +21732,7 @@ module.exports.addRobot = function(id) {
     var identifier = id.toUpperCase();
     var robot = findRobot(identifier);
     if (!robot) {
-        robots.push(new botlib.AsyncLinkbot(identifier));
+        robots.unshift(new botlib.AsyncLinkbot(identifier));
         writeRobotsToConfig(robots);
         storageLib.add(identifier, 0);
         events.trigger('changed', 1);
@@ -21321,9 +21828,20 @@ module.exports.relinquish = function(bot) {
     }).indexOf(bot.id);
     if (idx >= 0 && robots[idx].status === "acquired") {
         robots[idx].status = "ready";
+        robots[idx].unregister();
         return robots[idx].status;
     } else {
         return false;
+    }
+};
+
+module.exports.relinquishAll = function() {
+    for (var i = 0; i < robots.length; i++) {
+        var robot = robots[i];
+        if (robot.status === "acquired") {
+            robot.status = "ready";
+            robot.unregister();
+        }
     }
 };
 
