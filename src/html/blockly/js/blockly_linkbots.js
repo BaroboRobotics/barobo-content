@@ -394,7 +394,9 @@ Blockly.Blocks['linkbotjs_moveright'] = {
 
 Blockly.JavaScript['linkbotjs_moveright'] = function(block) {
     var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
-    var code = value_linkbot + '.moveRight();\n';
+    var code = '.then( function() {\n'
+             + '    return '+value_linkbot+'.moveRight();\n'
+             + '})\n'
     return code;
 };
 
@@ -421,7 +423,9 @@ Blockly.Blocks['linkbotjs_moveleft'] = {
 
 Blockly.JavaScript['linkbotjs_moveleft'] = function(block) {
     var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
-    var code = value_linkbot + '.moveLeft();\n';
+    var code = '.then( function() {\n'
+             + '    return '+value_linkbot+'.moveLeft();\n'
+             + '})\n'
     return code;
 };
 
@@ -448,7 +452,9 @@ Blockly.Blocks['linkbotjs_movebackward'] = {
 
 Blockly.JavaScript['linkbotjs_movebackward'] = function(block) {
     var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
-    var code = value_linkbot + '.moveBackward();\n';
+    var code = '.then( function() {\n'
+             + '    return '+value_linkbot+'.moveBackward();\n'
+             + '})\n'
     return code;
 };
 
@@ -475,7 +481,9 @@ Blockly.Blocks['linkbotjs_moveforward'] = {
 
 Blockly.JavaScript['linkbotjs_moveforward'] = function(block) {
     var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
-    var code = value_linkbot + '.moveForward();\n';
+    var code = '.then( function() {\n'
+             + '    return '+value_linkbot+'.moveForward();\n'
+             + '})\n'
     return code;
 };
 
