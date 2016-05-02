@@ -329,7 +329,16 @@ Blockly.Blocks['linkbotjs_zero'] = {
 
 Blockly.JavaScript['linkbotjs_zero'] = function(block) {
     var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
-    var code = value_linkbot + '.zero();\n';
+    var code = 
+          '.then( function() {\n'
+        + '    return '+value_linkbot+'.reset()\n'
+        + '        .then( function() {\n'
+        + '            return '+value_linkbot+'.moveTo(0, 0, 0, 0x07);\n'
+        + '            })\n'
+        + '        .then( function() {\n'
+        + '            return '+value_linkbot+'.moveWait(0x07);\n'
+        + '            });\n'
+        + '})\n';
     return code;
 };
 
