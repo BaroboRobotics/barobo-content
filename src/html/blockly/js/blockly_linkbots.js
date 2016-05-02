@@ -159,7 +159,7 @@ Blockly.JavaScript['linkbotjs_color'] = function(block) {
         + '    var green = parseInt(color.substring(3,5), 16);\n'
         + '    var blue = parseInt(color.substring(5,7), 16);\n'
         + '    return '+value_linkbot+'.color(red, green, blue);\n'
-        + '})\n'
+        + '})\n';
     //code = value_linkbot + '.color(' + red + ', ' + green + ', ' + blue + ');\n';
     code = block;
     return code;
@@ -297,6 +297,10 @@ Blockly.Blocks['linkbotjs_buzzer'] = {
 Blockly.JavaScript['linkbotjs_buzzer'] = function(block) {
     var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
     var value_name = Blockly.JavaScript.valueToCode(block, 'FREQ', Blockly.JavaScript.ORDER_ATOMIC);
+    var code = 
+        '.then( function() {\n' +
+        '   return '+value_linkbot+'.setBuzzerFrequency('+value_name+');\n' +
+        '})\n';
     var code = value_linkbot + '.buzzerFrequency(' + value_name + ');\n';
     return code;
 };
