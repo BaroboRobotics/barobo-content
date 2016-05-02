@@ -302,7 +302,6 @@ Blockly.JavaScript['linkbotjs_buzzer'] = function(block) {
         '.then( function() {\n' +
         '   return '+value_linkbot+'.setBuzzerFrequency('+value_name+');\n' +
         '})\n';
-    var code = value_linkbot + '.buzzerFrequency(' + value_name + ');\n';
     return code;
 };
 
