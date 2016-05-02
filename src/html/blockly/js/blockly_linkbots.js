@@ -75,7 +75,7 @@ Blockly.JavaScript['linkbotjs_delay'] = function(block) {
   // TODO: Assemble JavaScript into code variable.
   var code = '.then( function() {\n'
            + '  return new Promise( function(resolve, reject) {\n'
-           + '    setTimeout('+value_delay_seconds*1000+', resolve);\n'
+           + '    setTimeout(resolve, '+value_delay_seconds*1000+');\n'
            + '  });\n'
            + '})\n';
   return code;
@@ -155,7 +155,7 @@ Blockly.JavaScript['linkbotjs_color'] = function(block) {
     var value_color = Blockly.JavaScript.valueToCode(block, 'COLOR', Blockly.JavaScript.ORDER_ATOMIC);
     var block = 
           '.then( function() {\n'
-        + '    var color = '+value_color+';\n'
+        + '    var color = ' + value_color + '\n'
         + '    var red = parseInt(color.substring(1,3), 16);\n'
         + '    var green = parseInt(color.substring(3,5), 16);\n'
         + '    var blue = parseInt(color.substring(5,7), 16);\n'

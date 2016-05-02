@@ -159,6 +159,7 @@ app.init = function() {
         //app.log(code);
 
         // Check for infinite loops.
+        /*
         Blockly.JavaScript.INFINITE_LOOP_TRAP = '  checkTimeout();\n';
         var timeouts = 0;
         var checkTimeout = function() {
@@ -166,6 +167,7 @@ app.init = function() {
                 throw 'code timed out.';
             }
         };
+        */
 
         var code = Blockly.JavaScript.workspaceToCode(app.workspace);
         code += '\nLinkbots.relinquishAll();\n';
