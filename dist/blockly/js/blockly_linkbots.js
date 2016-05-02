@@ -365,7 +365,9 @@ Blockly.Blocks['linkbotjs_stop'] = {
 
 Blockly.JavaScript['linkbotjs_stop'] = function(block) {
     var value_linkbot = Blockly.JavaScript.valueToCode(block, 'LINKBOT', Blockly.JavaScript.ORDER_ATOMIC);
-    var code = value_linkbot + '.stop();\n';
+    var code = '.then( function() {\n'
+             + '    return '+value_linkbot+'.stop(0x07);\n'
+             + '})\n'
     return code;
 };
 
