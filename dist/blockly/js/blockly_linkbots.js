@@ -520,10 +520,16 @@ Blockly.Blocks['linkbotjs_move_to'] = {
 
 Blockly.JavaScript['linkbotjs_move_to'] = function(block) {
     var variable_linkbot = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('LINKBOT'), Blockly.Variables.NAME_TYPE);
-    var value_1 = Blockly.JavaScript.valueToCode(block, '1', Blockly.JavaScript.ORDER_ATOMIC);
-    var value_2 = Blockly.JavaScript.valueToCode(block, '2', Blockly.JavaScript.ORDER_ATOMIC);
-    var value_3 = Blockly.JavaScript.valueToCode(block, '3', Blockly.JavaScript.ORDER_ATOMIC);
-    var code = variable_linkbot + '.moveTo(' + value_1 + ', ' + value_2 + ', ' + value_3 + ');\n';
+    var value_1 = Blockly.JavaScript.valueToCode(block, '1', Blockly.JavaScript.ORDER_ATOMIC) * Math.PI / 180;
+    var value_2 = Blockly.JavaScript.valueToCode(block, '2', Blockly.JavaScript.ORDER_ATOMIC) * Math.PI / 180;
+    var value_3 = Blockly.JavaScript.valueToCode(block, '3', Blockly.JavaScript.ORDER_ATOMIC) * Math.PI / 180;
+    var code = 
+        '.then( function() {\n'
+      + '   return '+variable_linkbot+'.moveTo('+value_1+', '+value_2+', '+value_3+', 0x07);\n'
+      + '})\n'
+      + '.then ( function() {\n'
+      + '    return '+variable_linkbot+'.moveWait(0x07);\n'
+      + '})\n';
     return code;
 };
 
@@ -562,10 +568,16 @@ Blockly.Blocks['linkbotjs_move'] = {
 
 Blockly.JavaScript['linkbotjs_move'] = function(block) {
     var variable_linkbot = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('LINKBOT'), Blockly.Variables.NAME_TYPE);
-    var value_1 = Blockly.JavaScript.valueToCode(block, '1', Blockly.JavaScript.ORDER_ATOMIC);
-    var value_2 = Blockly.JavaScript.valueToCode(block, '2', Blockly.JavaScript.ORDER_ATOMIC);
-    var value_3 = Blockly.JavaScript.valueToCode(block, '3', Blockly.JavaScript.ORDER_ATOMIC);
-    var code = variable_linkbot + '.move(' + value_1 + ', ' + value_2 + ', ' + value_3 + ');\n';
+    var value_1 = Blockly.JavaScript.valueToCode(block, '1', Blockly.JavaScript.ORDER_ATOMIC) * Math.PI / 180;
+    var value_2 = Blockly.JavaScript.valueToCode(block, '2', Blockly.JavaScript.ORDER_ATOMIC) * Math.PI / 180;
+    var value_3 = Blockly.JavaScript.valueToCode(block, '3', Blockly.JavaScript.ORDER_ATOMIC) * Math.PI / 180;
+    var code = 
+        '.then( function() {\n'
+      + '   return '+variable_linkbot+'.move('+value_1+', '+value_2+', '+value_3+', 0x07);\n'
+      + '})\n'
+      + '.then ( function() {\n'
+      + '    return '+variable_linkbot+'.moveWait(0x07);\n'
+      + '})\n';
     return code;
 };
 
