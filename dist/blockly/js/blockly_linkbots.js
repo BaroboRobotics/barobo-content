@@ -750,10 +750,10 @@ Blockly.Blocks['linkbotjs_encoder_events'] = {
             .appendField("linkbot");
         this.appendValueInput("ENCODER")
             .setCheck("Number")
-            .appendField("button #");
+            .appendField("encoder #");
         this.appendValueInput("ANGLE")
             .setCheck("Number")
-            .appendField("state");
+            .appendField("angle");
         this.appendValueInput("TIMESTAMP")
             .setCheck("Number")
             .appendField("timestamp");
