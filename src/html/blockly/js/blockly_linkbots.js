@@ -242,7 +242,18 @@ Blockly.Blocks['linkbotjs_connect_id'] = {
 Blockly.JavaScript['linkbotjs_connect_id'] = function(block) {
     var variable_robot = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('ROBOT'), Blockly.Variables.NAME_TYPE);
     var text_robot_id = block.getFieldValue('ROBOT_ID');
-    var code = variable_robot + '.connect("ws://localhost:42000", "'+text_robot_id+'")\n';
+    var code = "( function() {\n" +
+               "    return new Promise(function(resolve, reject) { \n" +
+               "        chrome.runtime.sendMessage('khkdcmdnffkbfkhheppbjglfiohccnhb', {}, function(response) {\n" + 
+               "            if ( response.serviceHostPort === null ) { \n" + 
+               "                reject('Could not locate Linkbot Hub. Is the Linkbot Labs app running?'); }\n" + 
+               "            else { resolve ( response.serviceHostPort ); }\n" + 
+               "        });\n" + 
+               "    });\n" + 
+               "})()\n";
+    code +=    ".then( function(daemonProxy) {\n" + 
+               '    return ' + variable_robot + '.connect("ws://"+daemonProxy, "'+text_robot_id+'")\n' + 
+               '})\n';
 
     //return [code, Blockly.JavaScript.ORDER_ATOMIC];
     return code;
